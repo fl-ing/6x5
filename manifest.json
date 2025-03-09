@@ -1,0 +1,36 @@
+{
+    "name": "6x5 by fl-ing",
+    "short_name": "fliX5",
+    "start_url": "/6x5",
+    "display": "standalone",
+    "orientation": "portrait",
+    "background_color": "#0b0b0e",
+    "theme_color": "#2e1f7a",
+    "icons": [
+      {
+        "src": "assets/logos/logo_32.png",
+        "sizes": "32x32",
+        "type": "image/x-icon"
+      },
+      {
+        "src": "assets/logos/logo_64.png",
+        "sizes": "64x64",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/logos/logo_128.png",
+        "sizes": "128x128",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/logos/logo_256.png",
+        "sizes": "256x256",
+        "type": "image/png"
+      },
+      {
+        "src": "assets/logos/logo_512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+}
