@@ -196,6 +196,7 @@ fels
 feme
 fern
 fest
+feta
 fete
 fett
 fies
@@ -260,6 +261,7 @@ grob
 gros
 gurt
 guru
+gute
 guss
 haar
 habe
@@ -377,6 +379,7 @@ kino
 kitt
 kitz
 kiwi
+klan
 klar
 klee
 klon

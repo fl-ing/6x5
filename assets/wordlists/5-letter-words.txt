@@ -12,6 +12,7 @@ abtei
 abtun
 abzug
 achse
+achso
 achte
 acker
 acryl
@@ -195,7 +196,6 @@ chaos
 chaot
 chart
 chase
-chief
 chili
 chlor
 chrom
@@ -291,7 +291,6 @@ ebnen
 echse
 ecker
 eckig
-eggen
 ehern
 ehren
 eiche
@@ -1433,6 +1432,7 @@ untat
 unten
 unter
 unter
+untot
 uralt
 urban
 urbar
