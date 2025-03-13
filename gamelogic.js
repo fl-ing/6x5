@@ -599,7 +599,7 @@ function fadeKey(keyObj) {
 document.addEventListener("keydown", (event) => {
     event.preventDefault();
     let inputKey = event.key;
-    /* console.log(inputKey); */
+    console.log(inputKey);
     if (!infoState) {
         if (inputKey == "Tab") {
             switchFunction();
@@ -619,7 +619,7 @@ document.addEventListener("keydown", (event) => {
             }
             return;
         } 
-        else if (inputKey == "Enter") {
+        if (inputKey == "Enter") {
             if (endState) {
                 resetGrid();
                 return;
@@ -630,27 +630,36 @@ document.addEventListener("keydown", (event) => {
                 return;
             }
         }
-        else if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
+        if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
             selectSwitch();
             return;
         }
-        else if (inputKey == "ArrowRight") {
+        if (inputKey == "ArrowRight") {
             fadeKey(rightKey);
             selectionToRight();
             return;
         }
-        else if (inputKey == "ArrowLeft") {
+        if (inputKey == "ArrowLeft") {
             fadeKey(leftKey);
             selectionToLeft();
             return;
         }
 
         // check for valid input letters and write into active tile
-        else if (validLetters.includes(inputKey.toLowerCase())) {
+        if (validLetters.includes(inputKey.toLowerCase())) {
             let ltr = inputKey.toUpperCase();
             writeActiveTile(ltr);
             let letterKey = document.getElementById(ltr + "-key");
             fadeKey(letterKey);
+            return;
+        }
+        if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
+            setErrorMessage("Umlaute werden ausgeschrieben!");
+            return;
+        }
+        if (inputKey == "ß") {
+            setErrorMessage("ẞ wird zu SS!");
+            return;
         }
     }
 })
