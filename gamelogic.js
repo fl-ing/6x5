@@ -443,10 +443,12 @@ function backspaceFunction() {
         let ati = getActiveTileIndex();
         if (ati == undefined) { // clear last tile if all contain letter
             activeRowTiles[activeRowTiles.length - 1].children[0].innerText = "";
-        } else if (activeRowTiles[ati].children[0].innerText != "") {
+        } else if (activeRowTiles[ati].children[0].innerText != "") { // clear letter in act tile
             activeRowTiles[ati].children[0].innerText = "";
         } else if (ati != 0 && activeRowTiles[ati].children[0].innerText == "") {
-            removeSelection(activeRowTiles[ati], ["selected"]);
+            if (removeSelection(activeRowTiles[ati])) {
+                addSelection(activeRowTiles[ati - 1]);
+            }
             activeRowTiles[ati - 1].children[0].innerText = ""
         } else if (ati == 0) {
             removeSelection(activeRowTiles[ati], ["selected"]);
@@ -703,12 +705,14 @@ document.addEventListener("touchend", (event) => {
     }
     backspaceHold = false;
     clearTimeout(backspaceTimeout);
+    contentDiv.removeEventListener("touchmove");
 })
 
 document.addEventListener("touchcancel", (event) => {
     event.preventDefault();
     backspaceHold = false;
     clearTimeout(backspaceTimeout);
+    contentDiv.removeEventListener("touchmove");
 })
 
 document.addEventListener("click", (event) => {
