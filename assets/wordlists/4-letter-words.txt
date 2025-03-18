@@ -838,6 +838,7 @@ zofe
 zoff
 zoll
 zone
+zoom
 zopf
 zorn
 zwar

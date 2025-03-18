@@ -314,7 +314,6 @@ ekeln
 eklat
 eklig
 elend
-eleve
 elfer
 elfte
 elite
@@ -404,6 +403,7 @@ fixen
 fjord
 flach
 flair
+flaum
 fleck
 flink
 flirt
@@ -460,6 +460,7 @@ geben
 geber
 gebet
 gebot
+gecko
 gegen
 gehen
 geier
@@ -946,6 +947,7 @@ nicht
 niere
 niete
 ninja
+nitro
 nival
 nobel
 nomen
@@ -1045,7 +1047,6 @@ preis
 prima
 prima
 prime
-primo
 prinz
 prior
 prise
@@ -1209,7 +1210,6 @@ senil
 senke
 sense
 sepia
-serge
 serie
 serum
 sesam
@@ -1531,6 +1531,7 @@ wuest
 wunde
 wurst
 zabel
+zacke
 zagen
 zange
 zebra

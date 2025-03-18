@@ -1966,6 +1966,7 @@ stylen
 subtil
 suchen
 sucher
+sudoku
 sueden
 suehne
 suende
