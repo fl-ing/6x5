@@ -56,10 +56,11 @@ try {
 
 // ------------------------------ Setup Process -----------------------------
 
-window.scrollTo(0,1);
-setAllWordLists(wordLengthArray).then(() => {
+let startSetup = setAllWordLists(wordLengthArray).then(() => {
     setupFunction();
 });
+
+window.addEventListener("DOMContentLoaded", startSetup);
 
 function setupFunction() {
     setWordLength();
@@ -599,7 +600,7 @@ function fadeKey(keyObj) {
 document.addEventListener("keydown", (event) => {
     event.preventDefault();
     let inputKey = event.key;
-    console.log(inputKey);
+    /* console.log(inputKey); */
     if (!infoState) {
         if (inputKey == "Tab") {
             switchFunction();
