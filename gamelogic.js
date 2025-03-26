@@ -7,11 +7,13 @@ let enterKey            =   document.getElementById("enter-key");
 let selectKey           =   document.getElementById("select-key");
 let leftKey             =   document.getElementById("left-key");
 let rightKey            =   document.getElementById("right-key");
+let settingsButton      =   document.getElementById("settings-button");
 let switchButton        =   document.getElementById("switch-button");
 let statButton          =   document.getElementById("stat-button");
 let infoButton          =   document.getElementById("info-button");
 let statBox             =   document.getElementById("stat-box");
 let infoBox             =   document.getElementById("info-box");
+let settingsBox         =   document.getElementById("settings-box");
 let keyboardOverlay     =   document.getElementById("keyboard-overlay");
 let bars                =   document.querySelectorAll(".bar");
 let contentDiv          =   document.getElementById("content-div");
@@ -31,6 +33,7 @@ let rowList = null;
 let activeRowTiles = null;
 let statState = false;
 let infoState = false;
+let settingsState = false;
 let endState = false;
 let wordLengthArray = [4, 5, 6];
 let defaultWordLength = 5;
@@ -608,7 +611,7 @@ document.addEventListener("keydown", (event) => {
             return;
         }
     }
-    if (!statState && !infoState) {
+    if (!statState && !infoState && !settingsState) {
         /* console.log(pressedKeyData); */
         if (inputKey == "Backspace") {
             if (event.ctrlKey) {
@@ -732,24 +735,43 @@ document.addEventListener("click", (event) => {
 
 function touchClickInteraction(event) {
     /* console.log(event); */
-    if (statState && !statBox.contains(event.target) && !switchButton.contains(event.target)) {
-        statSwitchFunction();
-        if (infoButton.contains(event.target)) {
-            infoSwitchFunction();
-        }
+
+    if (infoButton.contains(event.target)) {
+        if (statState) { statSwitchFunction() }
+        if (settingsState) { settingsSwitchFunction() }
+        infoSwitchFunction();
         return;
     }
+
+    if (settingsButton.contains(event.target)) {
+        if (infoState) { infoSwitchFunction() }
+        if (statState) { statSwitchFunction() }
+        settingsSwitchFunction();
+        return;
+    }
+
+    if (statButton.contains(event.target)) {
+        if (infoState) { infoSwitchFunction() }
+        if (settingsState) { settingsSwitchFunction() }
+        statSwitchFunction();
+        return;
+    }
+
     if (infoState && !infoBox.contains(event.target)) {
         infoSwitchFunction();
-        if (statButton.contains(event.target)) {
-            statSwitchFunction();
-        }
         return;
     }
-    if (statButton.contains(event.target)) {
+
+    if (settingsState && !settingsBox.contains(event.target)) {
+        settingsSwitchFunction();
+        return;
+    }
+
+    if (statState && !statBox.contains(event.target) && !switchButton.contains(event.target)) {
         statSwitchFunction();
         return;
     }
+
     if (restartButton.contains(event.target)) {
         resetGrid();
         return;
@@ -759,18 +781,7 @@ function touchClickInteraction(event) {
         functionAfterEveryAction();
         return;
     }
-    if (infoButton.contains(event.target)) {
-        infoSwitchFunction();
-        return;
-    }
-    if (enterKey.contains(event.target)) {
-        if (!endState) {
-            fadeKey(enterKey);
-            enterFunction();
-            functionAfterEveryAction();
-        }
-        return;
-    }
+
     if (!endState) {
         for (tile of activeRowTiles) { // logic for selecting or deselecting tile by clicking
             if (tile.contains(event.target)) {
@@ -802,6 +813,11 @@ function touchClickInteraction(event) {
             fadeKey(deleteKey);
             backspaceFunction();
             return
+        } else if (enterKey.contains(event.target)) {
+            fadeKey(enterKey);
+            enterFunction();
+            functionAfterEveryAction();
+            return;
         } else {
             for (let letterKey of letterKeys) {
                 if (letterKey.contains(event.target)) {
@@ -812,7 +828,6 @@ function touchClickInteraction(event) {
             }
         }
     }
-    functionAfterEveryAction();
 }
 
 function cleanActiveTiles() {
@@ -951,6 +966,23 @@ function infoSwitchFunction() {
     switchButton.style.setProperty("visibility", "hidden");
     addClasses(infoButton, ["active-side-button"]);
     infoBox.style.visibility = "visible";
+}
+
+function settingsSwitchFunction() {
+    if (settingsState) {
+        settingsState = false;
+        contentCover.style.visibility = "hidden";
+        switchButton.style.setProperty("visibility", "visible");
+        settingsButton.style.setProperty("visibility", "visible");
+        removeClasses(settingsButton, ["active-side-button"]);
+        settingsBox.style.visibility = "hidden";
+        return;
+    }
+    settingsState = true;
+    contentCover.style.setProperty("visibility", "visible");
+    switchButton.style.setProperty("visibility", "hidden");
+    addClasses(settingsButton, ["active-side-button"]);
+    settingsBox.style.visibility = "visible";
 }
 
 function getCssRulesFor(styleString) {
