@@ -19,6 +19,7 @@ alle
 also
 alte
 amen
+amme
 amok
 anal
 anno
@@ -72,6 +73,7 @@ boje
 boom
 boot
 bord
+boss
 bote
 brav
 brei
@@ -690,6 +692,7 @@ soda
 sofa
 sohn
 soja
+sold
 sole
 soll
 solo
@@ -742,6 +745,7 @@ treu
 trio
 trip
 trog
+tuba
 tube
 tuch
 tuer
@@ -814,7 +818,6 @@ wozu
 wund
 wurf
 wurm
-yeti
 yoga
 zaeh
 zahl

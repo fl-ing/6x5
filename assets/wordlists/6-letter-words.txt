@@ -423,6 +423,7 @@ eigelb
 eigens
 eignen
 eigner
+eiklar
 eiland
 einbau
 einher
@@ -711,6 +712,7 @@ gieren
 gierig
 giftig
 gigant
+gimpel
 gipfel
 gitter
 glaser
@@ -1433,6 +1435,7 @@ oefter
 okkult
 oktave
 oktett
+okular
 online
 opfern
 option
@@ -1709,6 +1712,7 @@ rosine
 rosten
 rostig
 rubrik
+rucola
 rudern
 rudern
 ruegen
@@ -1741,7 +1745,6 @@ salzen
 salzig
 samtig
 sandig
-sanner
 satire
 sattel
 saturn
@@ -1947,6 +1950,7 @@ strahl
 stramm
 strand
 strang
+strass
 strebe
 streik
 streit
@@ -2133,6 +2137,7 @@ unwohl
 unwort
 unzeit
 update
+upload
 urahne
 urinal
 urlaub
@@ -2320,6 +2325,7 @@ zielen
 zierde
 zieren
 ziffer
+zimbel
 zimmer
 zipfel
 zirkel
