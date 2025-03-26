@@ -827,6 +827,7 @@ function touchClickInteraction(event) {
                 }
             }
         }
+        functionAfterEveryAction();
     }
 }
 
