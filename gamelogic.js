@@ -925,7 +925,8 @@ function statSwitchFunction() {
         contentCover.style.setProperty("visibility", "hidden");
         statBox.style.visibility = "hidden";
         removeClasses(statButton, ["active-side-button"]);
-
+        settingsButton.style.visibility = "visible";
+        infoButton.style.visibility = "visible";
         currentStreakElement.style.removeProperty("--num");
         bestStreakElement.style.removeProperty("--num");
         playedGamesElement.style.removeProperty("--num");
@@ -950,6 +951,8 @@ function statSwitchFunction() {
     contentCover.style.setProperty("visibility", "visible");
     addClasses(statButton, ["active-side-button"]);
     statBox.style.visibility = "visible";
+    settingsButton.style.visibility = "hidden";
+    infoButton.style.visibility = "hidden";
     updateStatData();
 }
 
