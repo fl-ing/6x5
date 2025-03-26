@@ -958,6 +958,7 @@ function infoSwitchFunction() {
         infoState = false;
         contentCover.style.visibility = "hidden";
         switchButton.style.setProperty("visibility", "visible");
+        statButton.style.setProperty("visibility", "visible");
         removeClasses(infoButton, ["active-side-button"]);
         infoBox.style.visibility = "hidden";
         return;
@@ -965,6 +966,7 @@ function infoSwitchFunction() {
     infoState = true;
     contentCover.style.setProperty("visibility", "visible");
     switchButton.style.setProperty("visibility", "hidden");
+    statButton.style.setProperty("visibility", "hidden");
     addClasses(infoButton, ["active-side-button"]);
     infoBox.style.visibility = "visible";
 }
@@ -974,6 +976,7 @@ function settingsSwitchFunction() {
         settingsState = false;
         contentCover.style.visibility = "hidden";
         switchButton.style.setProperty("visibility", "visible");
+        statButton.style.setProperty("visibility", "visible");
         settingsButton.style.setProperty("visibility", "visible");
         removeClasses(settingsButton, ["active-side-button"]);
         settingsBox.style.visibility = "hidden";
@@ -982,6 +985,7 @@ function settingsSwitchFunction() {
     settingsState = true;
     contentCover.style.setProperty("visibility", "visible");
     switchButton.style.setProperty("visibility", "hidden");
+    statButton.style.setProperty("visibility", "hidden");
     addClasses(settingsButton, ["active-side-button"]);
     settingsBox.style.visibility = "visible";
 }

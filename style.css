@@ -140,7 +140,7 @@ body {
     right: 0;
     margin-inline: auto;
     border: 1px solid var(--neutral-grey);
-    border-radius: .5%;
+    border-radius: 1vw;
     color: var(--almost-white);
 }
 
@@ -154,6 +154,10 @@ body {
 
 #settings-box {
     visibility: hidden;
+}
+
+#settings-box > * {
+    padding: 2% 3%;
 }
 
 #info-box {
@@ -436,8 +440,7 @@ body {
     background-color: var(--tile-background-grey);
     width: 70%;
     border: 1px solid var(--neutral-grey);
-    border-radius: 3%;
-    margin-bottom: 15%;
+    border-radius: 1vw;
 }
 
 .active-side-button {
@@ -458,7 +461,6 @@ body {
 
 #info-button {
     aspect-ratio: 1;
-    border-radius: 3%;
 }
 
 #stat-button {
@@ -791,6 +793,11 @@ svg {
 
     .overlay-box {
         width: calc(var(--max-content-width) * 0.76);
+        border-radius: calc(var(--max-content-width) * 0.01);
+    }
+
+    .side-button {
+        border-radius: calc(var(--max-content-width) * 0.01);
     }
 
     .box-heading {
