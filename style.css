@@ -96,14 +96,14 @@ body {
 
 #error-message {
     visibility: hidden;
-    display: block;
     position: absolute;
     margin-inline: auto;
     color: var(--almost-white);
     border: 1px solid var(--almost-white);;
     background-color: var(--dark-blue);
-    height: calc(100vw / 12);
-    top: calc(-100vw / 18);
+    --h: calc(100vw / 12);
+    height: var(--h);
+    top: calc(var(--h) * -1);
     left: 0;
     right: 0;
     width: 60%;
@@ -851,8 +851,7 @@ svg {
     }
 
     #error-message {
-        height: calc(var(--max-content-width) / 12);
-        top: calc(var(--max-content-width) / -18);
+        --h: calc(var(--max-content-width) / 12);
         font-size: calc(var(--max-content-width) / 30);
     }
 
