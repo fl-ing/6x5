@@ -421,11 +421,13 @@ body {
 
 #bar-chart {
     display: flex;
+    flex-direction: row;
+    flex: flex-end;
     height: 100%
 }
 
 .bar-container {
-    width: 100%;
+    flex-grow: 1;
     height: 100%;
     border-bottom: none;
     align-content: flex-end;

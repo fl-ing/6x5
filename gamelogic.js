@@ -64,6 +64,7 @@ try {
 
 let startSetup = setAllWordLists(wordLengthArray).then(() => {
     setupFunction();
+    statSwitchFunction();
 });
 
 window.addEventListener("DOMContentLoaded", startSetup);
