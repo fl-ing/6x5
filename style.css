@@ -76,11 +76,6 @@ body {
     margin: 2vw 0px;
 }
 
-#header-game-name {
-    text-decoration: underline 10% dotted var(--almost-white);
-    text-underline-offset: 10%;
-}
-
 #content-div {
     margin-inline: auto;
     flex: 1;
@@ -158,6 +153,76 @@ body {
 
 #settings-box > * {
     padding: 2% 3%;
+}
+
+.settings-row {
+    font-size: 4vw;
+    display: flex;
+    flex-direction: row;
+    height: 10vw;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.setting-text {
+    display: flex;
+    text-align: left;
+}
+
+.example-tile {
+    height: 60%;
+    rotate: 25deg;
+    aspect-ratio: 1;
+    display: flex;
+    justify-items: center;
+    margin: 0px 1%;
+}
+
+.toggle-switch {
+    position: relative;
+    border-radius: 5vw;
+    height: 100%;
+    aspect-ratio: 1.8;
+    margin-left: 2%;
+    padding: 2%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border: 1px solid var(--neutral-grey);
+}
+
+.toggle-switch-on {
+    background-color: var(--dark-blue);
+    justify-content: end;
+}
+
+.toggle-circle {
+    position: absolute;
+    height: 60%;
+    aspect-ratio: 1;
+    background-color: var(--neutral-grey);
+    border-radius: 50%;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.toggle-switch-on > .toggle-circle {
+    animation: toggleCircleOn 0.3s ease;
+    background-color: var(--mid-blue);
+}
+
+.toggle-switch-off > .toggle-circle {
+    animation: toggleCircleOff 0.3s ease;
+    background-color: var(--neutral-grey);
+}
+
+@keyframes toggleCircleOn {
+    0%      { left: 10%; right: 55% }
+    100%    { right: 10%; left: 55% }
+}
+
+@keyframes toggleCircleOff {
+    0%      { right: 10%; left: 55% }
+    100%    { left: 10%; right: 55% }
 }
 
 #info-box {
@@ -546,7 +611,7 @@ div.row:last-child > * {
 }
 
 .keyboard-section {
-    padding-top: 2%;
+    padding: 2% 0px;
     display: flex;
     justify-content: center;
     flex: 0;
@@ -804,6 +869,11 @@ svg {
         font-size: calc(var(--max-content-width) * 0.045);
     }
 
+    .settings-row {
+        font-size: calc(var(--max-content-width) * 0.04);
+        height: calc(var(--max-content-width) * 0.1);
+    }
+
     .stat-row {
         padding: calc(var(--max-content-width) * 0.01) calc(var(--max-content-width) * 0.02);
     }
@@ -884,6 +954,10 @@ svg {
 }
 
 @media (pointer: fine) {
+    .toggle-switch:hover {
+        cursor: pointer;
+    }
+    
     .side-button:hover {
         cursor: pointer;
     }

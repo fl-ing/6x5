@@ -14,6 +14,7 @@ let infoButton          =   document.getElementById("info-button");
 let statBox             =   document.getElementById("stat-box");
 let infoBox             =   document.getElementById("info-box");
 let settingsBox         =   document.getElementById("settings-box");
+let colorSwitchButton   =   document.getElementById("color-switch");
 let keyboardOverlay     =   document.getElementById("keyboard-overlay");
 let bars                =   document.querySelectorAll(".bar");
 let contentDiv          =   document.getElementById("content-div");
@@ -21,6 +22,7 @@ let contentCover        =   document.getElementById("content-cover");
 let restartButton       =   document.getElementById("restart-button");
 let errorDiv            =   document.getElementById("error-message");
 let hideFunctionId;
+let backspaceTimeout;
 
 let currentStreakElement=   document.getElementById("current-streak-num");
 let bestStreakElement   =   document.getElementById("best-streak-num");
@@ -35,6 +37,7 @@ let statState = false;
 let infoState = false;
 let settingsState = false;
 let endState = false;
+let alternateColorState = false;
 let wordLengthArray = [4, 5, 6];
 let defaultWordLength = 5;
 let nTries = 6;
@@ -68,6 +71,7 @@ window.addEventListener("DOMContentLoaded", startSetup);
 function setupFunction() {
     setWordLength();
     getUserData();
+    applyUserSettings();
 
     switch (wordLength) {
         case 4:
@@ -93,7 +97,231 @@ function setupFunction() {
     setActiveTile();        // auto sets the active tile
 }
 
+// handle keyboard presses
+document.addEventListener("keydown", (event) => {
+    event.preventDefault();
+    let inputKey = event.key;
+    /* console.log(inputKey); */
+    if (!infoState) {
+        if (inputKey == "Tab") {
+            switchFunction();
+            functionAfterEveryAction();
+            return;
+        }
+    }
+    if (!statState && !infoState && !settingsState) {
+        /* console.log(pressedKeyData); */
+        if (inputKey == "Backspace") {
+            if (event.ctrlKey) {
+                removeAllSelection();
+                clearActiveRow();
+            } else {
+                fadeKey(deleteKey);
+                backspaceFunction();
+            }
+            return;
+        } 
+        if (inputKey == "Enter") {
+            if (endState) {
+                resetGrid();
+                return;
+            } else {
+                fadeKey(enterKey);
+                enterFunction();
+                functionAfterEveryAction();
+                return;
+            }
+        }
+        if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
+            selectSwitch();
+            return;
+        }
+        if (inputKey == "ArrowRight") {
+            fadeKey(rightKey);
+            selectionToRight();
+            return;
+        }
+        if (inputKey == "ArrowLeft") {
+            fadeKey(leftKey);
+            selectionToLeft();
+            return;
+        }
 
+        // check for valid input letters and write into active tile
+        if (validLetters.includes(inputKey.toLowerCase())) {
+            let ltr = inputKey.toUpperCase();
+            writeActiveTile(ltr);
+            let letterKey = document.getElementById(ltr + "-key");
+            fadeKey(letterKey);
+            return;
+        }
+        if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
+            setErrorMessage("Umlaute werden ausgeschrieben!");
+            return;
+        }
+        if (inputKey == "ß") {
+            setErrorMessage("ẞ wird zu SS!");
+            return;
+        }
+    }
+})
+
+window.addEventListener("resize", () => {
+    setTileDimension();
+});
+
+document.addEventListener("touchstart", (event) => {
+    /* event.preventDefault(); */
+    if (event.touches.length == 1) {
+        if (deleteKey.contains(event.target)) {
+            backspaceHold = true;
+            repressDeleteKey();
+        }
+        touchClickInteraction(event);
+    }
+});
+
+contentDiv.addEventListener("touchmove", (event) => {
+    /* event.preventDefault(); */
+    if (event.touches.length == 1) {
+        if (deleteKey.contains(event.target) && backspaceHold) {
+           let delBox = deleteKey.getBoundingClientRect();
+           let touchX = event.touches[0].clientX;
+           let touchY = event.touches[0].clientY;
+           if (touchX < delBox.left || touchX > delBox.right || touchY < delBox.top || touchY > delBox.bottom) {
+            backspaceHold = false;
+            clearTimeout(backspaceTimeout);
+           }
+        }
+    }
+}, {passive: true})
+
+document.addEventListener("touchend", (event) => {
+    if (event.cancelable) {
+        event.preventDefault();
+    }
+    backspaceHold = false;
+    clearTimeout(backspaceTimeout);
+    contentDiv.removeEventListener("touchmove");
+})
+
+document.addEventListener("touchcancel", (event) => {
+    event.preventDefault();
+    backspaceHold = false;
+    clearTimeout(backspaceTimeout);
+    contentDiv.removeEventListener("touchmove");
+})
+
+document.addEventListener("click", (event) => {
+    event.preventDefault();
+    touchClickInteraction(event);
+});
+
+// ---------------- touch or click functionality ------------------------
+function touchClickInteraction(event) {
+    /* console.log(event); */
+
+    if (infoButton.contains(event.target)) {
+        if (statState) { statSwitchFunction() }
+        if (settingsState) { settingsSwitchFunction() }
+        infoSwitchFunction();
+        return;
+    }
+
+    if (settingsButton.contains(event.target)) {
+        if (infoState) { infoSwitchFunction() }
+        if (statState) { statSwitchFunction() }
+        settingsSwitchFunction();
+        return;
+    }
+
+    if (statButton.contains(event.target)) {
+        if (infoState) { infoSwitchFunction() }
+        if (settingsState) { settingsSwitchFunction() }
+        statSwitchFunction();
+        return;
+    }
+
+    if (infoState && !infoBox.contains(event.target)) {
+        infoSwitchFunction();
+        return;
+    }
+
+    if (settingsState && !settingsBox.contains(event.target)) {
+        settingsSwitchFunction();
+        return;
+    }
+
+    if (statState && !statBox.contains(event.target) && !switchButton.contains(event.target)) {
+        statSwitchFunction();
+        return;
+    }
+
+    if (restartButton.contains(event.target)) {
+        resetGrid();
+        return;
+    }
+
+    if (switchButton.contains(event.target)) {
+        switchFunction();
+        functionAfterEveryAction();
+        return;
+    }
+
+    if (settingsState) {
+        if (colorSwitchButton.contains(event.target)) {
+            alternateColorSwitchFunction();
+        }
+    }
+
+    if (!endState) {
+        for (tile of activeRowTiles) { // logic for selecting or deselecting tile by clicking
+            if (tile.contains(event.target)) {
+                if (removeSelection(tile)) {
+                    functionAfterEveryAction();
+                    return
+                } else {
+                    removeAllSelection();
+                    addSelection(tile);
+                }
+                functionAfterEveryAction();
+                return;
+            }
+        }
+        if (!(keyboardContainer.contains(event.target))) {
+            removeAllSelection();
+        } else if (selectKey.contains(event.target)) {
+            selectSwitch();
+            return;
+        } else if (leftKey.contains(event.target)) {
+            fadeKey(leftKey);
+            selectionToLeft();
+            return;
+        } else if (rightKey.contains(event.target)) {
+            fadeKey(rightKey);
+            selectionToRight();
+            return;
+        } else if (deleteKey.contains(event.target)) {
+            fadeKey(deleteKey);
+            backspaceFunction();
+            return
+        } else if (enterKey.contains(event.target)) {
+            fadeKey(enterKey);
+            enterFunction();
+            functionAfterEveryAction();
+            return;
+        } else {
+            for (let letterKey of letterKeys) {
+                if (letterKey.contains(event.target)) {
+                    fadeKey(letterKey);
+                    writeActiveTile(letterKey.innerText);
+                    return;
+                }
+            }
+        }
+        functionAfterEveryAction();
+    }
+}
 
 // ------------------ functions -----------------------
 
@@ -114,6 +342,12 @@ function getUserData() {
         wins += winArr[i];
     }
     playedGames = wins + losses;
+}
+
+function applyUserSettings() {
+    if (localStorage.getItem("alternateColors") != null && !alternateColorState) {
+        alternateColorSwitchFunction();
+    }
 }
 
 function animateStatInt(element, value) {
@@ -554,6 +788,28 @@ function enterFunction(resetState = false) {
     }
 }
 
+function alternateColorSwitchFunction() {
+    alternateColorState = !alternateColorState;
+    let rootCssRules = getCssRulesFor(":root");
+    if (alternateColorState) { // set alternative colors
+        localStorage.setItem("alternateColors", "y");
+        addClasses(colorSwitchButton, ["toggle-switch-on"]);
+        removeClasses(colorSwitchButton, ["toggle-switch-off"]);
+        rootCssRules.style.setProperty("--tile-green", "rgb(24, 77, 138)");
+        rootCssRules.style.setProperty("--tile-green-80", "rgba(24, 77, 138, 0.8)");
+        rootCssRules.style.setProperty("--tile-yellow", "rgb(197, 85, 51)");
+        rootCssRules.style.setProperty("--tile-yellow-80", "rgba(197, 85, 51, 0.8)");
+    } else { // set normal colors
+        localStorage.removeItem("alternateColors");
+        addClasses(colorSwitchButton, ["toggle-switch-off"]);
+        removeClasses(colorSwitchButton, ["toggle-switch-on"]);
+        rootCssRules.style.setProperty("--tile-green", "rgb(58, 134, 61)");
+        rootCssRules.style.setProperty("--tile-green-80", "rgba(58, 134, 60, 0.8)");
+        rootCssRules.style.setProperty("--tile-yellow", "rgb(219, 146, 0)");
+        rootCssRules.style.setProperty("--tile-yellow-80", "rgba(219, 146, 0, 0.8)");
+    }
+}
+
 function setEndState(endMessage) {
     endState = true;
     keyboardOverlay.style.setProperty("visibility", "visible");
@@ -599,81 +855,6 @@ function fadeKey(keyObj) {
     addClasses(keyObj, ["fading-key"]);
 }
 
-// handle keyboard presses
-document.addEventListener("keydown", (event) => {
-    event.preventDefault();
-    let inputKey = event.key;
-    /* console.log(inputKey); */
-    if (!infoState) {
-        if (inputKey == "Tab") {
-            switchFunction();
-            functionAfterEveryAction();
-            return;
-        }
-    }
-    if (!statState && !infoState && !settingsState) {
-        /* console.log(pressedKeyData); */
-        if (inputKey == "Backspace") {
-            if (event.ctrlKey) {
-                removeAllSelection();
-                clearActiveRow();
-            } else {
-                fadeKey(deleteKey);
-                backspaceFunction();
-            }
-            return;
-        } 
-        if (inputKey == "Enter") {
-            if (endState) {
-                resetGrid();
-                return;
-            } else {
-                fadeKey(enterKey);
-                enterFunction();
-                functionAfterEveryAction();
-                return;
-            }
-        }
-        if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
-            selectSwitch();
-            return;
-        }
-        if (inputKey == "ArrowRight") {
-            fadeKey(rightKey);
-            selectionToRight();
-            return;
-        }
-        if (inputKey == "ArrowLeft") {
-            fadeKey(leftKey);
-            selectionToLeft();
-            return;
-        }
-
-        // check for valid input letters and write into active tile
-        if (validLetters.includes(inputKey.toLowerCase())) {
-            let ltr = inputKey.toUpperCase();
-            writeActiveTile(ltr);
-            let letterKey = document.getElementById(ltr + "-key");
-            fadeKey(letterKey);
-            return;
-        }
-        if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
-            setErrorMessage("Umlaute werden ausgeschrieben!");
-            return;
-        }
-        if (inputKey == "ß") {
-            setErrorMessage("ẞ wird zu SS!");
-            return;
-        }
-    }
-})
-
-window.addEventListener("resize", () => {
-    setTileDimension();
-});
-
-let backspaceTimeout;
-
 function repressDeleteKey(itr = 0) {
     if (itr > 10) {return};
     let ms = (itr == 0) ? 400 : 40;
@@ -684,151 +865,6 @@ function repressDeleteKey(itr = 0) {
             repressDeleteKey(itr + 1);
         }    
     }, ms);
-}
-
-document.addEventListener("touchstart", (event) => {
-    /* event.preventDefault(); */
-    if (event.touches.length == 1) {
-        if (deleteKey.contains(event.target)) {
-            backspaceHold = true;
-            repressDeleteKey();
-        }
-        touchClickInteraction(event);
-    }
-});
-
-contentDiv.addEventListener("touchmove", (event) => {
-    /* event.preventDefault(); */
-    if (event.touches.length == 1) {
-        if (deleteKey.contains(event.target) && backspaceHold) {
-           let delBox = deleteKey.getBoundingClientRect();
-           let touchX = event.touches[0].clientX;
-           let touchY = event.touches[0].clientY;
-           if (touchX < delBox.left || touchX > delBox.right || touchY < delBox.top || touchY > delBox.bottom) {
-            backspaceHold = false;
-            clearTimeout(backspaceTimeout);
-           }
-        }
-    }
-}, {passive: true})
-
-document.addEventListener("touchend", (event) => {
-    if (event.cancelable) {
-        event.preventDefault();
-    }
-    backspaceHold = false;
-    clearTimeout(backspaceTimeout);
-    contentDiv.removeEventListener("touchmove");
-})
-
-document.addEventListener("touchcancel", (event) => {
-    event.preventDefault();
-    backspaceHold = false;
-    clearTimeout(backspaceTimeout);
-    contentDiv.removeEventListener("touchmove");
-})
-
-document.addEventListener("click", (event) => {
-    event.preventDefault();
-    touchClickInteraction(event);
-});
-
-function touchClickInteraction(event) {
-    /* console.log(event); */
-
-    if (infoButton.contains(event.target)) {
-        if (statState) { statSwitchFunction() }
-        if (settingsState) { settingsSwitchFunction() }
-        infoSwitchFunction();
-        return;
-    }
-
-    if (settingsButton.contains(event.target)) {
-        if (infoState) { infoSwitchFunction() }
-        if (statState) { statSwitchFunction() }
-        settingsSwitchFunction();
-        return;
-    }
-
-    if (statButton.contains(event.target)) {
-        if (infoState) { infoSwitchFunction() }
-        if (settingsState) { settingsSwitchFunction() }
-        statSwitchFunction();
-        return;
-    }
-
-    if (infoState && !infoBox.contains(event.target)) {
-        infoSwitchFunction();
-        return;
-    }
-
-    if (settingsState && !settingsBox.contains(event.target)) {
-        settingsSwitchFunction();
-        return;
-    }
-
-    if (statState && !statBox.contains(event.target) && !switchButton.contains(event.target)) {
-        statSwitchFunction();
-        return;
-    }
-
-    if (restartButton.contains(event.target)) {
-        resetGrid();
-        return;
-    }
-    if (switchButton.contains(event.target)) {
-        switchFunction();
-        functionAfterEveryAction();
-        return;
-    }
-
-    if (!endState) {
-        for (tile of activeRowTiles) { // logic for selecting or deselecting tile by clicking
-            if (tile.contains(event.target)) {
-                if (removeSelection(tile)) {
-                    functionAfterEveryAction();
-                    return
-                } else {
-                    removeAllSelection();
-                    addSelection(tile);
-                }
-                functionAfterEveryAction();
-                return;
-            }
-        }
-        if (!(keyboardContainer.contains(event.target))) {
-            removeAllSelection();
-        } else if (selectKey.contains(event.target)) {
-            selectSwitch();
-            return;
-        } else if (leftKey.contains(event.target)) {
-            fadeKey(leftKey);
-            selectionToLeft();
-            return;
-        } else if (rightKey.contains(event.target)) {
-            fadeKey(rightKey);
-            selectionToRight();
-            return;
-        } else if (deleteKey.contains(event.target)) {
-            fadeKey(deleteKey);
-            backspaceFunction();
-            return
-        } else if (enterKey.contains(event.target)) {
-            fadeKey(enterKey);
-            enterFunction();
-            functionAfterEveryAction();
-            return;
-        } else {
-            for (let letterKey of letterKeys) {
-                if (letterKey.contains(event.target)) {
-                    fadeKey(letterKey);
-                    writeActiveTile(letterKey.innerText);
-                    return;
-                }
-            }
-        }
-        functionAfterEveryAction();
-    }
 }
 
 function cleanActiveTiles() {
