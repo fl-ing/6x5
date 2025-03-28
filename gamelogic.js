@@ -21,7 +21,7 @@ let contentDiv          =   document.getElementById("content-div");
 let contentCover        =   document.getElementById("content-cover");
 let restartButton       =   document.getElementById("restart-button");
 let errorDiv            =   document.getElementById("error-message");
-let hideFunctionId;
+let hideErrorMessageFn;
 let backspaceTimeout;
 
 let currentStreakElement=   document.getElementById("current-streak-num");
@@ -47,12 +47,6 @@ let winArr, wins, losses, playedGames, streaks;
 
 let backspaceHold = false;
 
-try {
-    let currentYear = new Date().getFullYear();
-    document.getElementById("copyright-text").innerHTML = `&nbsp;© ${currentYear}`
-} catch (err) {
-    console.error("Fehler bei Datumsabfrage:", err)
-}
 
 /* if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('serviceworker.js')
@@ -64,7 +58,12 @@ try {
 
 let startSetup = setAllWordLists(wordLengthArray).then(() => {
     setupFunction();
-    statSwitchFunction();
+    try {
+        let currentYear = new Date().getFullYear();
+        document.getElementById("copyright-text").innerHTML = `&nbsp;© ${currentYear}`
+    } catch (err) {
+        console.error("Fehler bei Datumsabfrage:", err)
+    }
 });
 
 window.addEventListener("DOMContentLoaded", startSetup);
@@ -1121,10 +1120,10 @@ function wiggleActiveRow() {
 
 function setErrorMessage(message) {
     wiggleActiveRow();
-    clearTimeout(hideFunctionId);
+    clearTimeout(hideErrorMessageFn);
     errorDiv.innerText = message;
     errorDiv.style.visibility = "visible";
-    hideFunctionId = setTimeout(() => {errorDiv.style.visibility = "hidden"; errorDiv.innerText = ""}, 1500);
+    hideErrorMessageFn = setTimeout(() => {errorDiv.style.visibility = "hidden"; errorDiv.innerText = ""}, 1500);
 }
 
 // ------- word checking function -----------------------------------------
