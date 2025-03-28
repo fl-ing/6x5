@@ -217,11 +217,13 @@ body {
 
 @keyframes toggleCircleOn {
     0%      { margin-left: 10%; }
+    50%     { height: 50% }
     100%    { margin-left: 57%; }
 }
 
 @keyframes toggleCircleOff {
     0%      { margin-left: 57%; }
+    50%     { height: 50% }
     100%    { margin-left: 10%; }
 }
 
@@ -236,14 +238,6 @@ body {
 
 #info-box > * {
     padding: 2% 3%;
-}
-
-.box-button {
-    width: 50%;
-    background-color: var(--dark-blue);
-    justify-self: center;
-    border: 1px solid var(--neutral-grey);
-    border-radius: 2vw;
 }
 
 /* #about-heading {
