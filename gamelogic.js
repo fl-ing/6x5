@@ -510,7 +510,7 @@ function resizeGrid(itr = 0) {
         return;
     }
     let newContentHeight = getContentHeight();
-    if (newContentHeight > windowHeight) {
+    if (newContentHeight > windowHeight + 1) {
         resizeGrid(itr + 1);
     }
 }
