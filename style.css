@@ -170,6 +170,7 @@ body {
 }
 
 .example-tile {
+    border: 1px solid var(--neutral-grey);
     height: 60%;
     rotate: 25deg;
     aspect-ratio: 1;
@@ -179,50 +180,49 @@ body {
 }
 
 .toggle-switch {
-    position: relative;
+    /* position: relative; */
     border-radius: 5vw;
     height: 100%;
     aspect-ratio: 1.8;
-    margin-left: 2%;
-    padding: 2%;
     display: flex;
     flex-direction: row;
-    align-items: center;
     border: 1px solid var(--neutral-grey);
+    align-items: center;
 }
 
 .toggle-switch-on {
     background-color: var(--dark-blue);
-    justify-content: end;
 }
 
 .toggle-circle {
-    position: absolute;
     height: 60%;
     aspect-ratio: 1;
-    background-color: var(--neutral-grey);
+    margin: 10%;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid var(--neutral-grey);
     border-radius: 50%;
-    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.5));
+    box-shadow: 0px 0px 10px black;
 }
 
 .toggle-switch-on > .toggle-circle {
-    animation: toggleCircleOn 0.3s ease;
-    background-color: var(--mid-blue);
+    animation: toggleCircleOn .3s ease;
+    background-color: rgba(255, 255, 255, 0.2);
+    margin-left: 57%;
 }
 
 .toggle-switch-off > .toggle-circle {
-    animation: toggleCircleOff 0.3s ease;
-    background-color: var(--neutral-grey);
+    animation: toggleCircleOff .3s ease;
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 @keyframes toggleCircleOn {
-    0%      { left: 10%; right: 55% }
-    100%    { right: 10%; left: 55% }
+    0%      { margin-left: 10%; }
+    100%    { margin-left: 57%; }
 }
 
 @keyframes toggleCircleOff {
-    0%      { right: 10%; left: 55% }
-    100%    { left: 10%; right: 55% }
+    0%      { margin-left: 57%; }
+    100%    { margin-left: 10%; }
 }
 
 #info-box {
@@ -236,6 +236,14 @@ body {
 
 #info-box > * {
     padding: 2% 3%;
+}
+
+.box-button {
+    width: 50%;
+    background-color: var(--dark-blue);
+    justify-self: center;
+    border: 1px solid var(--neutral-grey);
+    border-radius: 2vw;
 }
 
 /* #about-heading {
