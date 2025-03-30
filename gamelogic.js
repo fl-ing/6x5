@@ -326,7 +326,7 @@ function handleKeyboardPress(event) {
 
         // check for valid input letters and write into active tile
         if (validLetters.includes(inputKey.toLowerCase())) {
-            let ltr = inputKey;
+            let ltr = inputKey.toLowerCase();
             writeActiveTile(ltr);
             let letterKey = document.getElementById(ltr + "-key");
             fadeKey(letterKey);
