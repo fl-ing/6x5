@@ -29,6 +29,7 @@ function setDomVars() {
     statBox             =   document.getElementById("stat-box");
     infoBox             =   document.getElementById("info-box");
     settingsBox         =   document.getElementById("settings-box");
+    altColorRow         =   document.getElementById("alternative-colors-row");
     colorSwitchButton   =   document.getElementById("color-switch");
     keyboardOverlay     =   document.getElementById("keyboard-overlay");
     bars                =   document.querySelectorAll(".bar");
@@ -221,7 +222,7 @@ function touchClickInteraction(event) {
     }
 
     if (settingsState) {
-        if (colorSwitchButton.contains(event.target)) {
+        if (colorSwitchButton.contains(event.target) || (event.type != "click" && altColorRow.contains(event.target))) {
             alternateColorSwitchFunction();
         }
     }
