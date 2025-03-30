@@ -559,18 +559,26 @@ function randomWord(w) {
 function reBuildGrid(wl) {
     let grid = document.getElementById("grid");
     grid.innerHTML = "";
-    let newRow = document.createElement("div");
+    /* let newRow = document.createElement("div");
     addClasses(newRow, ["row", "grid-row"]);
     let newTile = document.createElement("div");
     addClasses(newTile, ["tile", "grid-tile"]);
     let newLetterBox = document.createElement("div");
     addClasses(newLetterBox, ["letter-box"]);
-    newTile.appendChild(newLetterBox);
-    for (let i = 0; i < wl; i++) {
-        newRow.appendChild(newTile.cloneNode(true));
-    }
+    newTile.appendChild(newLetterBox); */
+    
     for (let i = 0; i < nTries; i++) {
-        grid.appendChild(newRow.cloneNode(true));
+        let newRow = document.createElement("div");
+        addClasses(newRow, ["row", "grid-row"]);
+        for (let i = 0; i < wl; i++) {
+            let newTile = document.createElement("div");
+            addClasses(newTile, ["tile", "grid-tile"]);
+            let newLetterBox = document.createElement("div");
+            addClasses(newLetterBox, ["letter-box"]);
+            newTile.appendChild(newLetterBox);
+            newRow.appendChild(newTile);
+        }
+        grid.appendChild(newRow);
     }
     getAllGridTiles();
     getGridRowList();
