@@ -818,16 +818,20 @@ function alternateColorSwitchFunction() {
         removeClasses(colorSwitchButton, ["toggle-switch-off"]);
         rootCssRules.style.setProperty("--tile-green", "rgb(196, 19, 93)");
         rootCssRules.style.setProperty("--tile-green-80", "rgba(196, 19, 93, 0.8)");
+        document.getElementById("about-green-text").textContent = "pinker Buchstabe";
         rootCssRules.style.setProperty("--tile-yellow", "rgb(31, 124, 167)");
         rootCssRules.style.setProperty("--tile-yellow-80", "rgba(31, 124, 167, 0.8)");
+        document.getElementById("about-yellow-text").textContent = "blauer Buchstabe";
     } else { // set normal colors
         localStorage.removeItem("alternateColors");
         addClasses(colorSwitchButton, ["toggle-switch-off"]);
         removeClasses(colorSwitchButton, ["toggle-switch-on"]);
         rootCssRules.style.setProperty("--tile-green", "rgb(58, 134, 61)");
         rootCssRules.style.setProperty("--tile-green-80", "rgba(58, 134, 60, 0.8)");
+        document.getElementById("about-green-text").textContent = "grüner Buchstabe";
         rootCssRules.style.setProperty("--tile-yellow", "rgb(219, 146, 0)");
         rootCssRules.style.setProperty("--tile-yellow-80", "rgba(219, 146, 0, 0.8)");
+        document.getElementById("about-yellow-text").textContent = "gelber Buchstabe";
     }
 }
 
