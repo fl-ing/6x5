@@ -819,8 +819,8 @@ function alternateColorSwitchFunction() {
         localStorage.setItem("alternateColors", "y");
         addClasses(colorSwitchButton, ["toggle-switch-on"]);
         removeClasses(colorSwitchButton, ["toggle-switch-off"]);
-        rootCssRules.style.setProperty("--tile-green", "rgb(24, 77, 138)");
-        rootCssRules.style.setProperty("--tile-green-80", "rgba(24, 77, 138, 0.8)");
+        rootCssRules.style.setProperty("--tile-green", "rgb(31, 94, 167)");
+        rootCssRules.style.setProperty("--tile-green-80", "rgba(31, 94, 167, 0.8)");
         rootCssRules.style.setProperty("--tile-yellow", "rgb(197, 85, 51)");
         rootCssRules.style.setProperty("--tile-yellow-80", "rgba(197, 85, 51, 0.8)");
     } else { // set normal colors
