@@ -1,35 +1,49 @@
 let validLetters = "qwertzuiopasdfghjklyxcvbnm"
 
-let keyboardContainer   =   document.querySelector(".keyboard-container");
-let letterKeys          =   document.querySelectorAll(".letter-key");
-let deleteKey           =   document.getElementById("delete-key");
-let enterKey            =   document.getElementById("enter-key");
-let selectKey           =   document.getElementById("select-key");
-let leftKey             =   document.getElementById("left-key");
-let rightKey            =   document.getElementById("right-key");
-let settingsButton      =   document.getElementById("settings-button");
-let switchButton        =   document.getElementById("switch-button");
-let statButton          =   document.getElementById("stat-button");
-let infoButton          =   document.getElementById("info-button");
-let statBox             =   document.getElementById("stat-box");
-let infoBox             =   document.getElementById("info-box");
-let settingsBox         =   document.getElementById("settings-box");
-let colorSwitchButton   =   document.getElementById("color-switch");
-let keyboardOverlay     =   document.getElementById("keyboard-overlay");
-let bars                =   document.querySelectorAll(".bar");
-let contentDiv          =   document.getElementById("content-div");
-let contentCover        =   document.getElementById("content-cover");
-let restartButton       =   document.getElementById("restart-button");
-let errorDiv            =   document.getElementById("error-message");
+let keyboardContainer   
+let letterKeys, deleteKey, enterKey, selectKey, leftKey, rightKey
+let settingsButton, switchButton, statButton, infoButton          
+let statBox, infoBox, settingsBox         
+let colorSwitchButton
+let keyboardOverlay, restartButton
+let bars                
+let contentDiv
+let contentCover
+let errorDiv
+let currentStreakElement, bestStreakElement, playedGamesElement, wonGamesElement, winPercentElement, avrTriesElement     
+
 let hideErrorMessageFn;
 let backspaceTimeout;
 
-let currentStreakElement=   document.getElementById("current-streak-num");
-let bestStreakElement   =   document.getElementById("best-streak-num");
-let playedGamesElement  =   document.getElementById("played-games-num");
-let wonGamesElement     =   document.getElementById("won-games-num");
-let winPercentElement   =   document.getElementById("win-percent");
-let avrTriesElement     =   document.getElementById("average-tries-num");
+function setDomVars() {
+    keyboardContainer   =   document.querySelector(".keyboard-container");
+    letterKeys          =   document.querySelectorAll(".letter-key");
+    deleteKey           =   document.getElementById("delete-key");
+    enterKey            =   document.getElementById("enter-key");
+    selectKey           =   document.getElementById("select-key");
+    leftKey             =   document.getElementById("left-key");
+    rightKey            =   document.getElementById("right-key");
+    settingsButton      =   document.getElementById("settings-button");
+    switchButton        =   document.getElementById("switch-button");
+    statButton          =   document.getElementById("stat-button");
+    infoButton          =   document.getElementById("info-button");
+    statBox             =   document.getElementById("stat-box");
+    infoBox             =   document.getElementById("info-box");
+    settingsBox         =   document.getElementById("settings-box");
+    colorSwitchButton   =   document.getElementById("color-switch");
+    keyboardOverlay     =   document.getElementById("keyboard-overlay");
+    bars                =   document.querySelectorAll(".bar");
+    contentDiv          =   document.getElementById("content-div");
+    contentCover        =   document.getElementById("content-cover");
+    restartButton       =   document.getElementById("restart-button");
+    errorDiv            =   document.getElementById("error-message");
+    currentStreakElement=   document.getElementById("current-streak-num");
+    bestStreakElement   =   document.getElementById("best-streak-num");
+    playedGamesElement  =   document.getElementById("played-games-num");
+    wonGamesElement     =   document.getElementById("won-games-num");
+    winPercentElement   =   document.getElementById("win-percent");
+    avrTriesElement     =   document.getElementById("average-tries-num");
+}
 
 let rowList = null;
 let activeRowTiles = null;
@@ -57,6 +71,7 @@ let backspaceHold = false;
 // ------------------------------ Setup Process -----------------------------
 
 let startSetup = setAllWordLists(wordLengthArray).then(() => {
+    setDomVars();
     setupFunction();
     try {
         let currentYear = new Date().getFullYear();
@@ -64,6 +79,63 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
     } catch (err) {
         console.error("Fehler bei Datumsabfrage:", err)
     }
+
+    document.addEventListener("keydown", (event) => {
+        event.preventDefault();
+        handleKeyboardPress(event);
+    })
+
+    window.addEventListener("resize", () => {
+        setTileDimension();
+    });
+
+    document.addEventListener("touchstart", (event) => {
+        /* event.preventDefault(); */
+        if (event.touches.length == 1) {
+            if (deleteKey.contains(event.target)) {
+                backspaceHold = true;
+                repressDeleteKey();
+            }
+            touchClickInteraction(event);
+        }
+    });
+
+    contentDiv.addEventListener("touchmove", (event) => {
+        /* event.preventDefault(); */
+        if (event.touches.length == 1) {
+            if (deleteKey.contains(event.target) && backspaceHold) {
+                let delBox = deleteKey.getBoundingClientRect();
+                let touchX = event.touches[0].clientX;
+                let touchY = event.touches[0].clientY;
+                if (touchX < delBox.left || touchX > delBox.right || touchY < delBox.top || touchY > delBox.bottom) {
+                    backspaceHold = false;
+                    clearTimeout(backspaceTimeout);
+                }
+            }
+        }
+    }, {passive: true})
+
+    document.addEventListener("touchend", (event) => {
+        if (event.cancelable) {
+            event.preventDefault();
+        }
+        backspaceHold = false;
+        clearTimeout(backspaceTimeout);
+        contentDiv.removeEventListener("touchmove");
+    })
+
+    document.addEventListener("touchcancel", (event) => {
+        event.preventDefault();
+        backspaceHold = false;
+        clearTimeout(backspaceTimeout);
+        contentDiv.removeEventListener("touchmove");
+    })
+
+    document.addEventListener("click", (event) => {
+        event.preventDefault();
+        touchClickInteraction(event);
+    });
+
 });
 
 window.addEventListener("DOMContentLoaded", startSetup);
@@ -97,125 +169,6 @@ function setupFunction() {
     setActiveTile();        // auto sets the active tile
 }
 
-// handle keyboard presses
-document.addEventListener("keydown", (event) => {
-    event.preventDefault();
-    let inputKey = event.key;
-    /* console.log(inputKey); */
-    if (!infoState) {
-        if (inputKey == "Tab") {
-            switchFunction();
-            functionAfterEveryAction();
-            return;
-        }
-    }
-    if (!statState && !infoState && !settingsState) {
-        /* console.log(pressedKeyData); */
-        if (inputKey == "Backspace") {
-            if (event.ctrlKey) {
-                removeAllSelection();
-                clearActiveRow();
-            } else {
-                fadeKey(deleteKey);
-                backspaceFunction();
-            }
-            return;
-        } 
-        if (inputKey == "Enter") {
-            if (endState) {
-                resetGrid();
-                return;
-            } else {
-                fadeKey(enterKey);
-                enterFunction();
-                functionAfterEveryAction();
-                return;
-            }
-        }
-        if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
-            selectSwitch();
-            return;
-        }
-        if (inputKey == "ArrowRight") {
-            fadeKey(rightKey);
-            selectionToRight();
-            return;
-        }
-        if (inputKey == "ArrowLeft") {
-            fadeKey(leftKey);
-            selectionToLeft();
-            return;
-        }
-
-        // check for valid input letters and write into active tile
-        if (validLetters.includes(inputKey.toLowerCase())) {
-            let ltr = inputKey.toUpperCase();
-            writeActiveTile(ltr);
-            let letterKey = document.getElementById(ltr + "-key");
-            fadeKey(letterKey);
-            return;
-        }
-        if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
-            setErrorMessage("Umlaute werden ausgeschrieben!");
-            return;
-        }
-        if (inputKey == "ß") {
-            setErrorMessage("ẞ wird zu SS!");
-            return;
-        }
-    }
-})
-
-window.addEventListener("resize", () => {
-    setTileDimension();
-});
-
-document.addEventListener("touchstart", (event) => {
-    /* event.preventDefault(); */
-    if (event.touches.length == 1) {
-        if (deleteKey.contains(event.target)) {
-            backspaceHold = true;
-            repressDeleteKey();
-        }
-        touchClickInteraction(event);
-    }
-});
-
-contentDiv.addEventListener("touchmove", (event) => {
-    /* event.preventDefault(); */
-    if (event.touches.length == 1) {
-        if (deleteKey.contains(event.target) && backspaceHold) {
-           let delBox = deleteKey.getBoundingClientRect();
-           let touchX = event.touches[0].clientX;
-           let touchY = event.touches[0].clientY;
-           if (touchX < delBox.left || touchX > delBox.right || touchY < delBox.top || touchY > delBox.bottom) {
-            backspaceHold = false;
-            clearTimeout(backspaceTimeout);
-           }
-        }
-    }
-}, {passive: true})
-
-document.addEventListener("touchend", (event) => {
-    if (event.cancelable) {
-        event.preventDefault();
-    }
-    backspaceHold = false;
-    clearTimeout(backspaceTimeout);
-    contentDiv.removeEventListener("touchmove");
-})
-
-document.addEventListener("touchcancel", (event) => {
-    event.preventDefault();
-    backspaceHold = false;
-    clearTimeout(backspaceTimeout);
-    contentDiv.removeEventListener("touchmove");
-})
-
-document.addEventListener("click", (event) => {
-    event.preventDefault();
-    touchClickInteraction(event);
-});
 
 // ---------------- touch or click functionality ------------------------
 function touchClickInteraction(event) {
@@ -320,6 +273,73 @@ function touchClickInteraction(event) {
             }
         }
         functionAfterEveryAction();
+    }
+}
+
+function handleKeyboardPress(event) {
+    let inputKey = event.key;
+    /* console.log(inputKey); */
+    if (!infoState) {
+        if (inputKey == "Tab") {
+            switchFunction();
+            functionAfterEveryAction();
+            return;
+        }
+    }
+    if (!statState && !infoState && !settingsState) {
+        /* console.log(pressedKeyData); */
+        if (inputKey == "Backspace") {
+            if (event.ctrlKey) {
+                removeAllSelection();
+                clearActiveRow();
+            } else {
+                fadeKey(deleteKey);
+                backspaceFunction();
+            }
+            return;
+        } 
+        if (inputKey == "Enter") {
+            if (endState) {
+                resetGrid();
+                return;
+            } else {
+                fadeKey(enterKey);
+                enterFunction();
+                functionAfterEveryAction();
+                return;
+            }
+        }
+        if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
+            selectSwitch();
+            return;
+        }
+        if (inputKey == "ArrowRight") {
+            fadeKey(rightKey);
+            selectionToRight();
+            return;
+        }
+        if (inputKey == "ArrowLeft") {
+            fadeKey(leftKey);
+            selectionToLeft();
+            return;
+        }
+
+        // check for valid input letters and write into active tile
+        if (validLetters.includes(inputKey.toLowerCase())) {
+            let ltr = inputKey.toUpperCase();
+            writeActiveTile(ltr);
+            let letterKey = document.getElementById(ltr + "-key");
+            fadeKey(letterKey);
+            return;
+        }
+        if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
+            setErrorMessage("Umlaute werden ausgeschrieben!");
+            return;
+        }
+        if (inputKey == "ß") {
+            setErrorMessage("ẞ wird zu SS!");
+            return;
+        }
     }
 }
 
@@ -706,7 +726,10 @@ function enterFunction(resetState = false) {
             inpStr = inpStr.toLowerCase();
             let itr = 0;
             if (words.includes(inpStr) || word == inpStr || resetState) {
-                revealActiveRow(inpStr, word);
+                /* revealActiveRow(inpStr, word); */
+                
+                let cs = getColors(inpStr, word);
+                revealTilesAndKeys(cs, inpStr);
 
                 if (!resetState) {
                     storeInputWord(inpStr);
@@ -911,7 +934,7 @@ function resetGrid() {
     addClasses(rowList[0], ["activerow"]);
     for (let tile of allTiles) {
         if (!hasClass(tile, "about-tile") ) {
-            removeClasses(tile, ["checked", "bg-green", "bg-yellow", "bg-dark"]);
+            removeClasses(tile, ["bg-green", "bg-yellow", "bg-dark"]);
             tile.children[0].innerText = "";
         }
     }
@@ -1099,7 +1122,6 @@ async function fetchWordArray(n) {
       let wordsArray = text.split('\n');
   
       // Remove any extra spaces or empty lines
-      // wordsArray = wordsArray.filter(word => word.trim() !== '');
       wordsArray = wordsArray.map(s => s.replace(/\r/g, ''));
   
       return wordsArray;
@@ -1127,122 +1149,62 @@ function setErrorMessage(message) {
 }
 
 // ------- word checking function -----------------------------------------
-function revealActiveRow(inputWord, hiddenWord) {
-    let inputMultArr = checkMultiple(inputWord);
-    let nInputMultLetters = inputMultArr[0].length;
-    if (nInputMultLetters > 0) {//if input word has multiple letters
-        for (let i = 0; i < nInputMultLetters; i++) {
-            let letter = inputMultArr[0][i];
-            let ltrCap = letter.toUpperCase();
-            let correspInputLetterInd = inputMultArr[i + 1];
-            let correspWordLetterInd = [];
-            if (hiddenWord.includes(letter)) {//go through each mult letter and check if it is in hiddenWord
-                //check if mult letter is more often in input than in hiddenWord
-                //store the numbers of the letter in input and numbers of the letter in hiddenWord
-                let nLetterInInput = inputMultArr[i + 1].length;
-                //console.log(`--> ${letter} is in input ${nLetterInInput} times at indices ${correspInputLetterInd}`);
-                for (let x = 0; x < hiddenWord.length; x++) {
-                    if (letter == hiddenWord[x]) {
-                    correspWordLetterInd.push(x);
-                    }
+
+function numberOfLetterInWord(letter, word) {
+    return word.split("").filter((char) => char === letter).length;
+}
+
+
+function getColors(inputWord, hiddenWord) {
+    if (inputWord === hiddenWord) {
+        return new Array(inputWord.length).fill("hit");
+    }
+    let outputArray = new Array(inputWord.length).fill("");
+    for (let i = 0; i < inputWord.length; i++) {
+        if (outputArray[i] != "") {
+            continue;
+        }
+        inputLetter = inputWord[i];
+        let nInInputWord = numberOfLetterInWord(inputLetter, inputWord);
+        let nInHiddenWord = numberOfLetterInWord(inputLetter, hiddenWord);
+        let diff = nInInputWord - nInHiddenWord;
+        for (let j = 0; j < inputWord.length - i; j++) {
+            let invertedIndex = inputWord.length - (1 + j);
+            if (inputWord[invertedIndex] === inputLetter) {
+                if (hiddenWord[invertedIndex] === inputLetter) {
+                    outputArray[invertedIndex] = "hit";
+                } else if (diff < 1) {
+                outputArray[invertedIndex] = "close";
+                } else {
+                outputArray[invertedIndex] = "miss";
+                diff--;
                 }
-                let nLetterInHiddenWord = correspWordLetterInd.length;
-                //console.log(`--> ${letter} is in hiddenWord ${nLetterInWord} time(s) at indices ${correspWordLetterInd}`);
-                if (nLetterInInput > nLetterInHiddenWord) {
-                    //console.log("--> I will track " + letter);
-                    let letterTracker = correspInputLetterInd; // TOTAL --> letterTracker for T = [0, 2]
-                    let yellowCounter = correspWordLetterInd.length;
-                    //console.log("--> letterTracker for " + letter + " = " + letterTracker);
-                    //go through the corresponding word letter indices
-                    //console.log("----> correspWordLetterInd: " + correspWordLetterInd);
-                    for (let j = 0; j < nLetterInHiddenWord; j++) {
-                        let checkedIndex = correspWordLetterInd[j];
-                        //if the checked mult letter matches, set it to green
-                        let matchCount = 0;
-                        if (hiddenWord[checkedIndex] == inputWord[checkedIndex]) {
-                            addClasses(activeRowTiles[checkedIndex], ["bg-green", "checked"])
-                            //color the corresponding keyboard key green
-                            let aKey = document.getElementById(ltrCap + "-key");
-                            addClasses(aKey, ["bg-green"]);
-                            removeClasses(aKey, ["bg-yellow"]);
-                            //console.log(`------> Letter ${letter} matches at index ${checkedIndex}`);
-                            matchCount += 1;
-                            yellowCounter--;
-                        }
-                        //go through the letter tracker array and delete the corresponding index
-                        letterTracker = letterTracker.filter(
-                            (x) => !correspWordLetterInd.includes(x)
-                        );
-                    }
-                    //console.log(`------> ${letter} will be set yellow at [${letterTracker}] ${yellowCounter} time(s)`);
-                    //color the tiles yellow
-                    for (let j = 0; j < letterTracker.length; j++) {
-                        addClasses(activeRowTiles[letterTracker[j]], ["checked"]);
-                        //console.log(`I checked letter ${letter} at index ${letterTracker[j]}.`);
-                        if (yellowCounter > 0) {
-                            //console.log(`I painted ${letter} at index ${letterTracker[j]} yellow.`);
-                            addClasses(activeRowTiles[letterTracker[j]], ["bg-yellow"])
-                            yellowCounter--;
-                            //color the corresponding keyboard key
-                            let aKey = document.getElementById(ltrCap + "-key");
-                            if (!hasClass(aKey, "bg-green")) {
-                                addClasses(aKey, "bg-yellow")
-                            }
-                        }
-                    }
-                } /* else {
-                    console.log(`I don't have to track ${letter}`);
-                } */
             }
         }
     }
-    //color all remaining unchecked tiles and corresp keys
-    for (i = 0; i < hiddenWord.length; i++) {
-        if (!hasClass(activeRowTiles[i], "checked")) {
-            let ltrSmall = inputWord[i];
-            let ltrCap = ltrSmall.toUpperCase();
-            let aKey = document.getElementById(ltrCap + "-key");
-            if (!hiddenWord.includes(ltrSmall)) {             //color dark
-                addClasses(aKey, ["bg-dark"])
-            } else if (ltrSmall == hiddenWord[i]) {           //color green
+    return(outputArray);
+}
+
+function revealTilesAndKeys(colorString, inputWord) {
+    for (let i = 0; i < colorString.length; i++) {
+        let letterCap = inputWord[i].toUpperCase();
+        let aKey = document.getElementById(letterCap + "-key");
+        switch (colorString[i]) {
+            case "hit":
                 addClasses(activeRowTiles[i], ["bg-green"]);
                 addClasses(aKey, ["bg-green"]);
                 removeClasses(aKey, ["bg-yellow"]);
-            } else {                                          //color yellow
+                break;
+            case "close":
                 addClasses(activeRowTiles[i], ["bg-yellow"]);
-                if (!hasClass(aKey, "bg-green")) {
-                    addClasses(aKey, ["bg-yellow"])
-                }
-            }
-            addClasses(activeRowTiles[i], ["checked"]);
-        }
+                if (!hasClass(aKey, "bg-green")) {  addClasses(aKey, ["bg-yellow"]); }
+                break;
+            case "miss":
+                addClasses(activeRowTiles[i], ["bg-dark"]);
+                addClasses(aKey, ["bg-dark"]);
+                break;
+            default:
+                continue;
+        } 
     }
-}
-
-function checkMultiple(wort) {
-    let multArray = [];
-    let outputArray = [[]];
-    //fill multArray with ones (assuming that every letter is contained ones)
-    for (let i = 0; i < wort.length; i++) {multArray.push(1)}  
-    for (let i = 0; i < wort.length; i++) {
-        if (multArray[i] == 1) {        // go through every letter of wort which still has an indicator 1
-            let tempMultArr = [i];      // for this letter: create tempMultArr that stores all occuring indexes
-            for (let j = i + 1; j < wort.length; j++) {
-                if (wort[i] == wort[j]) {tempMultArr.push(j);} 
-            }                           // tempMultArr --> [0, 1, 2] current is at all these indices of wort        
-            let n = tempMultArr.length; // n is 3 if the current letter is in the wort three times
-            if (n > 1) {                
-                outputArray[0].push(wort[i]); //add letter with n > n to outputArray[0]
-                                        
-                for (let k = 0; k < n; k++) {
-                    multArray[tempMultArr[k]] = n;
-                } //set multArray values of the stored multiples by assigning length of tmpMult
-                outputArray.push(tempMultArr);
-            }
-        }
-    }
-    // outputArray[0].length --> number of letters that occur more than ones in wort
-    // letter in outputArray[0[n]] occurs in wort outputArray[n+1].length times at indices outputArray[n+1]]
-    // console.log(outputArray);
-    return outputArray; // if wort = "aabbc" --> outputArray == [["a", "b"], [0, 1], [2, 3]]
 }
