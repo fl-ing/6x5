@@ -79,7 +79,7 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
     } catch (err) {
         console.error("Fehler bei Datumsabfrage:", err)
     }
-    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.3"
+    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.3";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();
@@ -819,10 +819,10 @@ function alternateColorSwitchFunction() {
         localStorage.setItem("alternateColors", "y");
         addClasses(colorSwitchButton, ["toggle-switch-on"]);
         removeClasses(colorSwitchButton, ["toggle-switch-off"]);
-        rootCssRules.style.setProperty("--tile-green", "rgb(31, 94, 167)");
-        rootCssRules.style.setProperty("--tile-green-80", "rgba(31, 94, 167, 0.8)");
-        rootCssRules.style.setProperty("--tile-yellow", "rgb(197, 85, 51)");
-        rootCssRules.style.setProperty("--tile-yellow-80", "rgba(197, 85, 51, 0.8)");
+        rootCssRules.style.setProperty("--tile-green", "rgb(196, 19, 93)");
+        rootCssRules.style.setProperty("--tile-green-80", "rgba(196, 19, 93, 0.8)");
+        rootCssRules.style.setProperty("--tile-yellow", "rgb(31, 124, 167)");
+        rootCssRules.style.setProperty("--tile-yellow-80", "rgba(31, 124, 167, 0.8)");
     } else { // set normal colors
         localStorage.removeItem("alternateColors");
         addClasses(colorSwitchButton, ["toggle-switch-off"]);
