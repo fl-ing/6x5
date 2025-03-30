@@ -77,7 +77,7 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
     } catch (err) {
         console.error("Fehler bei Datumsabfrage:", err)
     }
-    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.31";
+    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.32";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();
@@ -120,14 +120,14 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
         }
         backspaceHold = false;
         clearTimeout(backspaceTimeout);
-        contentDiv.removeEventListener("touchmove");
+        /* contentDiv.removeEventListener("touchmove"); */
     })
 
     document.addEventListener("touchcancel", (event) => {
         event.preventDefault();
         backspaceHold = false;
         clearTimeout(backspaceTimeout);
-        contentDiv.removeEventListener("touchmove");
+        /* contentDiv.removeEventListener("touchmove"); */
     })
 
     document.addEventListener("click", (event) => {
@@ -723,8 +723,8 @@ function enterFunction(resetState = false) {
                 inpStr += tile.children[0].innerHTML;
             }
             let itr = 0;
-            if (words.includes(inpStr) || word == inpStr || resetState) {
-                /* revealActiveRow(inpStr, word); */
+            inpStr = inpStr.toLowerCase();
+            if (words.includes(inpStr.toLowerCase()) || word == inpStr || resetState) {
                 
                 let cs = getColors(inpStr, word);
                 revealTilesAndKeys(cs, inpStr);
