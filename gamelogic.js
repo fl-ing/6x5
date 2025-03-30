@@ -9,7 +9,6 @@ let keyboardOverlay, restartButton
 let bars                
 let contentDiv
 let contentCover
-let errorDiv
 let currentStreakElement, bestStreakElement, playedGamesElement, wonGamesElement, winPercentElement, avrTriesElement     
 
 let hideErrorMessageFn;
@@ -36,7 +35,6 @@ function setDomVars() {
     contentDiv          =   document.getElementById("content-div");
     contentCover        =   document.getElementById("content-cover");
     restartButton       =   document.getElementById("restart-button");
-    errorDiv            =   document.getElementById("error-message");
     currentStreakElement=   document.getElementById("current-streak-num");
     bestStreakElement   =   document.getElementById("best-streak-num");
     playedGamesElement  =   document.getElementById("played-games-num");
@@ -327,7 +325,7 @@ function handleKeyboardPress(event) {
 
         // check for valid input letters and write into active tile
         if (validLetters.includes(inputKey.toLowerCase())) {
-            let ltr = inputKey.toUpperCase();
+            let ltr = inputKey;
             writeActiveTile(ltr);
             let letterKey = document.getElementById(ltr + "-key");
             fadeKey(letterKey);
@@ -591,7 +589,7 @@ function resetGridState() {
     for (let x = 0; x < i; x++) {
         for (let n = 0; n < wordLength; n++) {
             let revealWord = "";
-            rowList[x].children[n].children[0].innerText = wordArr[x][n].toUpperCase();
+            rowList[x].children[n].children[0].innerText = wordArr[x][n]/* .toUpperCase() */;
             revealWord += wordArr[x][n];
         }
         enterFunction(true);
@@ -722,9 +720,8 @@ function enterFunction(resetState = false) {
         if (activeRowFull()) {
             let inpStr = "";
             for (let tile of activeRowTiles) {
-                inpStr += tile.children[0].innerText;
+                inpStr += tile.children[0].innerHTML;
             }
-            inpStr = inpStr.toLowerCase();
             let itr = 0;
             if (words.includes(inpStr) || word == inpStr || resetState) {
                 /* revealActiveRow(inpStr, word); */
@@ -1144,9 +1141,15 @@ function wiggleActiveRow() {
 function setErrorMessage(message) {
     wiggleActiveRow();
     clearTimeout(hideErrorMessageFn);
-    errorDiv.innerText = message;
-    errorDiv.style.visibility = "visible";
-    hideErrorMessageFn = setTimeout(() => {errorDiv.style.visibility = "hidden"; errorDiv.innerText = ""}, 1500);
+
+    let errorAfterRules = getCssRulesFor(".activerow::after");
+    errorAfterRules.style.visibility = "visible";
+    errorAfterRules.style.content = `"${message}"`;
+
+    hideErrorMessageFn = setTimeout(() => {
+        errorAfterRules.style.visibility = "hidden";
+        errorAfterRules.style.content = `""`;
+    }, 1500);
 }
 
 // ------- word checking function -----------------------------------------
@@ -1188,8 +1191,7 @@ function getColors(inputWord, hiddenWord) {
 
 function revealTilesAndKeys(colorString, inputWord) {
     for (let i = 0; i < colorString.length; i++) {
-        let letterCap = inputWord[i].toUpperCase();
-        let aKey = document.getElementById(letterCap + "-key");
+        let aKey = document.getElementById(inputWord[i] + "-key");
         switch (colorString[i]) {
             case "hit":
                 addClasses(activeRowTiles[i], ["bg-green"]);

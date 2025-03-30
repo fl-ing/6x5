@@ -26,6 +26,7 @@
     --tile-green-80: rgba(58, 134, 60, 0.8);
     --tile-yellow-80: rgba(219, 146, 0, 0.8);
     --max-content-width: 500px;
+
 }
 
 @font-face {
@@ -92,24 +93,6 @@ body {
     flex-direction: column;
     padding: 2vw 0px;
     background-color: var(--tile-background-grey-50);
-}
-
-#error-message {
-    visibility: hidden;
-    position: absolute;
-    margin-inline: auto;
-    color: var(--almost-white);
-    border: 1px solid var(--almost-white);;
-    background-color: var(--dark-blue);
-    --h: calc(100vw / 12);
-    height: var(--h);
-    top: calc(var(--h) * -1);
-    left: 0;
-    right: 0;
-    width: 60%;
-    align-content: center;
-    font-size: calc(100vw / 30);
-    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
 }
 
 #content-cover {
@@ -550,9 +533,23 @@ body {
     box-sizing: border-box;
 }
 
-/* .activerow {
-    width: 102%;
-} */
+.activerow {
+    position: relative;
+}
+
+.activerow::after {
+    content: "";
+    font-size: 3.5vw;
+    visibility: hidden;
+    position: absolute;
+    top: 100%;
+    background-color: var(--dark-blue);
+    color: white;
+    width: 80%;
+    border: 1px solid var(--almost-white);
+    padding: 3%;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
 
 .wiggle-row {
     animation: wigglerow .3s ease-in-out;
@@ -612,6 +609,7 @@ div.row:last-child > * {
 .letter-box {
     width: 100%;
     font-size: 280%;
+    text-transform: uppercase;
 }
 
 .keyboard-section {
@@ -660,6 +658,7 @@ div.row:last-child > * {
 }
 
 .letter-key {
+    text-transform: uppercase;
     display: flex;
     align-items: center;
     text-align: center;
@@ -925,6 +924,10 @@ svg {
 
     .tile {
         border: calc(var(--max-content-width) * 0.003) solid var(--neutral-grey);
+    }
+
+    .activerow::after {
+        font-size: calc(var(--max-content-width) * 0.035);
     }
 
     /* .letter-box {
