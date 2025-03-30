@@ -953,6 +953,7 @@ function resetKeyboard() {
 }
 
 function switchFunction() {
+    hideErrorMessage();
     let lng = wordLengthArray.length;
     let itr = 0;
     for (let tmpWrdLngth of wordLengthArray) {
@@ -1147,9 +1148,14 @@ function setErrorMessage(message) {
     errorAfterRules.style.content = `"${message}"`;
 
     hideErrorMessageFn = setTimeout(() => {
-        errorAfterRules.style.visibility = "hidden";
-        errorAfterRules.style.content = `""`;
+        hideErrorMessage()
     }, 1500);
+}
+
+function hideErrorMessage() {
+    let errorAfterRules = getCssRulesFor(".activerow::after");
+    errorAfterRules.style.visibility = "hidden";
+    errorAfterRules.style.content = `""`;
 }
 
 // ------- word checking function -----------------------------------------
