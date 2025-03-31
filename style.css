@@ -396,6 +396,7 @@ body {
 
 #chart-row {
     background-color: rgba(0, 0, 0, 0.3);
+    max-width: 100%;
     display: flex;
     flex-direction: column;
     padding: 2vw 1vw 1vw 1vw;
@@ -405,7 +406,6 @@ body {
 #bar-chart {
     display: flex;
     flex-direction: row;
-    flex: flex-end;
     height: 100%
 }
 
