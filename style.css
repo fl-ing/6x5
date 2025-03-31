@@ -103,9 +103,9 @@ body {
     top: 0;
     left: 0;
     z-index: 1;
-    background-color: rgb(27, 27, 32, .95);
-    backdrop-filter: blur(5px);
-    -webkit-backdrop-filter: blur(5px);
+    background-color: rgb(27, 27, 32, .80);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
 }
 
 .overlay-box {
@@ -212,7 +212,7 @@ body {
 
 #info-box {
     touch-action: pan-y;
-    max-height: calc(100vh - 100px);
+    max-height: calc(88svh);
     overflow-y: auto;
     scrollbar-color: var(--neutral-grey) var(--dark-color);
     scrollbar-width: thin;

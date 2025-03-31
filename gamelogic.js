@@ -512,6 +512,10 @@ function resizeGrid(itr = 0) {
     if (itr > 80) {
         return;
     }
+    if (itr == 0) {
+        let gridContainerRules = getCssRulesFor(".grid-container");
+        gridContainerRules.style.setProperty("width", "76%");
+    }
     let contentHeight = getContentHeight();
     let windowHeight = window.innerHeight;
 /*     console.log(gameHeight);
