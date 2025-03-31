@@ -78,7 +78,7 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
     } catch (err) {
         console.error("Fehler bei Datumsabfrage:", err)
     }
-    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.32";
+    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.33";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();

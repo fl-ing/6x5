@@ -129,6 +129,7 @@ bezug
 bibel
 biber
 bidet
+biege
 biene
 biest
 binde
@@ -529,7 +530,6 @@ halse
 handy
 hanke
 hanse
-happy
 harem
 harfe
 harke
@@ -673,6 +673,7 @@ kerbe
 kerze
 kette
 keule
+kimme
 kiosk
 kippe
 kirre
@@ -1407,7 +1408,6 @@ turbo
 tuten
 tutor
 tutti
-typen
 typus
 uebel
 ueben
@@ -1439,7 +1439,6 @@ urbar
 vater
 vegan
 venus
-verve
 video
 viech
 vigil
@@ -1465,6 +1464,7 @@ wachs
 wacht
 waffe
 wagen
+wagon
 waise
 walze
 wampe

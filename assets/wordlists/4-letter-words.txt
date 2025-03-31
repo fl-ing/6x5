@@ -503,7 +503,6 @@ moos
 mops
 mord
 most
-muff
 mumm
 mund
 muse
@@ -551,6 +550,7 @@ oehr
 oeko
 oese
 ofen
+oger
 ohne
 okay
 oliv
