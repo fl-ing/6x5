@@ -1187,7 +1187,7 @@ function getColors(inputWord, hiddenWord) {
         return new Array(inputWord.length).fill("hit");
     }
     let outputArray = new Array(inputWord.length).fill("");
-    for (let i = 0; i < inputWord.length; i++) {
+    for (let i = inputWord.length - 1; i > -1; i--) {
         if (outputArray[i] != "") {
             continue;
         }
@@ -1195,15 +1195,14 @@ function getColors(inputWord, hiddenWord) {
         let nInInputWord = numberOfLetterInWord(inputLetter, inputWord);
         let nInHiddenWord = numberOfLetterInWord(inputLetter, hiddenWord);
         let diff = nInInputWord - nInHiddenWord;
-        for (let j = 0; j < inputWord.length - i; j++) {
-            let invertedIndex = inputWord.length - (1 + j);
-            if (inputWord[invertedIndex] === inputLetter) {
-                if (hiddenWord[invertedIndex] === inputLetter) {
-                    outputArray[invertedIndex] = "hit";
+        for (let j = inputWord.length - 1; j > -1; j--) {
+            if (inputWord[j] === inputLetter) {
+                if (hiddenWord[j] === inputLetter) {
+                    outputArray[j] = "hit";
                 } else if (diff < 1) {
-                outputArray[invertedIndex] = "close";
+                outputArray[j] = "close";
                 } else {
-                outputArray[invertedIndex] = "miss";
+                outputArray[j] = "miss";
                 diff--;
                 }
             }
