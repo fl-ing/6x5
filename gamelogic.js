@@ -279,7 +279,7 @@ function touchClickInteraction(event) {
 function handleKeyboardPress(event) {
     let inputKey = event.key;
     /* console.log(inputKey); */
-    if (!infoState) {
+    if (!infoState && !settingsState) {
         if (inputKey == "Tab") {
             switchFunction();
             functionAfterEveryAction();
@@ -288,16 +288,6 @@ function handleKeyboardPress(event) {
     }
     if (!statState && !infoState && !settingsState) {
         /* console.log(pressedKeyData); */
-        if (inputKey == "Backspace") {
-            if (event.ctrlKey) {
-                removeAllSelection();
-                clearActiveRow();
-            } else {
-                fadeKey(deleteKey);
-                backspaceFunction();
-            }
-            return;
-        } 
         if (inputKey == "Enter") {
             if (endState) {
                 resetGrid();
@@ -309,36 +299,47 @@ function handleKeyboardPress(event) {
                 return;
             }
         }
-        if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
-            selectSwitch();
-            return;
-        }
-        if (inputKey == "ArrowRight") {
-            fadeKey(rightKey);
-            selectionToRight();
-            return;
-        }
-        if (inputKey == "ArrowLeft") {
-            fadeKey(leftKey);
-            selectionToLeft();
-            return;
-        }
-
-        // check for valid input letters and write into active tile
-        if (validLetters.includes(inputKey.toLowerCase())) {
-            let ltr = inputKey.toLowerCase();
-            writeActiveTile(ltr);
-            let letterKey = document.getElementById(ltr + "-key");
-            fadeKey(letterKey);
-            return;
-        }
-        if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
-            setErrorMessage("Umlaute werden ausgeschrieben!");
-            return;
-        }
-        if (inputKey == "ß") {
-            setErrorMessage("ẞ wird zu SS!");
-            return;
+        if (!endState) {
+            if (inputKey == "Backspace") {
+                if (event.ctrlKey) {
+                    removeAllSelection();
+                    clearActiveRow();
+                } else {
+                    fadeKey(deleteKey);
+                    backspaceFunction();
+                }
+                return;
+            }
+            if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
+                selectSwitch();
+                return;
+            }
+            if (inputKey == "ArrowRight") {
+                fadeKey(rightKey);
+                selectionToRight();
+                return;
+            }
+            if (inputKey == "ArrowLeft") {
+                fadeKey(leftKey);
+                selectionToLeft();
+                return;
+            }
+            // check for valid input letters and write into active tile
+            if (validLetters.includes(inputKey.toLowerCase())) {
+                let ltr = inputKey.toLowerCase();
+                writeActiveTile(ltr);
+                let letterKey = document.getElementById(ltr + "-key");
+                fadeKey(letterKey);
+                return;
+            }
+            if (["ä", "ö", "ü"].includes(inputKey.toLowerCase())) {
+                setErrorMessage("Umlaute werden ausgeschrieben!");
+                return;
+            }
+            if (inputKey == "ß") {
+                setErrorMessage("ẞ wird zu SS!");
+                return;
+            }
         }
     }
 }
