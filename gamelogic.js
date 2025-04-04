@@ -1,47 +1,52 @@
-let validLetters = "qwertzuiopasdfghjklyxcvbnm"
+let validLetters = "qwertzuiopasdfghjklyxcvbnm";
 
-let keyboardContainer   
-let letterKeys, deleteKey, enterKey, selectKey, leftKey, rightKey
-let settingsButton, switchButton, statButton, infoButton          
-let statBox, infoBox, settingsBox         
-let colorSwitchButton
-let keyboardOverlay, restartButton
-let bars                
-let contentDiv
-let contentCover
-let currentStreakElement, bestStreakElement, playedGamesElement, wonGamesElement, winPercentElement, avrTriesElement     
+let keyboardContainer;
+let letterKeys, deleteKey, enterKey, selectKey, leftKey, rightKey;
+let settingsButton, switchButton, statButton, infoButton;
+let statBox, infoBox, settingsBox;
+let colorSwitchButton;
+let keyboardOverlay, restartButton;
+let bars;
+let contentDiv;
+let contentCover;
+let currentStreakElement,
+    bestStreakElement,
+    playedGamesElement,
+    wonGamesElement,
+    winPercentElement,
+    avrTriesElement;
 
 let hideErrorMessageFn;
 let backspaceTimeout;
 
 function setDomVars() {
-    keyboardContainer   =   document.querySelector(".keyboard-container");
-    letterKeys          =   document.querySelectorAll(".letter-key");
-    deleteKey           =   document.getElementById("delete-key");
-    enterKey            =   document.getElementById("enter-key");
-    selectKey           =   document.getElementById("select-key");
-    leftKey             =   document.getElementById("left-key");
-    rightKey            =   document.getElementById("right-key");
-    settingsButton      =   document.getElementById("settings-button");
-    switchButton        =   document.getElementById("switch-button");
-    statButton          =   document.getElementById("stat-button");
-    infoButton          =   document.getElementById("info-button");
-    statBox             =   document.getElementById("stat-box");
-    infoBox             =   document.getElementById("info-box");
-    settingsBox         =   document.getElementById("settings-box");
-    altColorRow         =   document.getElementById("alternative-colors-row");
-    colorSwitchButton   =   document.getElementById("color-switch");
-    keyboardOverlay     =   document.getElementById("keyboard-overlay");
-    bars                =   document.querySelectorAll(".bar");
-    contentDiv          =   document.getElementById("content-div");
-    contentCover        =   document.getElementById("content-cover");
-    restartButton       =   document.getElementById("restart-button");
-    currentStreakElement=   document.getElementById("current-streak-num");
-    bestStreakElement   =   document.getElementById("best-streak-num");
-    playedGamesElement  =   document.getElementById("played-games-num");
-    wonGamesElement     =   document.getElementById("won-games-num");
-    winPercentElement   =   document.getElementById("win-percent");
-    avrTriesElement     =   document.getElementById("average-tries-num");
+    keyboardContainer = document.querySelector(".keyboard-container");
+    letterKeys = document.querySelectorAll(".letter-key");
+    deleteKey = document.getElementById("delete-key");
+    enterKey = document.getElementById("enter-key");
+    selectKey = document.getElementById("select-key");
+    leftKey = document.getElementById("left-key");
+    rightKey = document.getElementById("right-key");
+    settingsButton = document.getElementById("settings-button");
+    switchButton = document.getElementById("switch-button");
+    statButton = document.getElementById("stat-button");
+    infoButton = document.getElementById("info-button");
+    statBox = document.getElementById("stat-box");
+    infoBox = document.getElementById("info-box");
+    settingsBox = document.getElementById("settings-box");
+    altColorRow = document.getElementById("alternative-colors-row");
+    colorSwitchButton = document.getElementById("color-switch");
+    keyboardOverlay = document.getElementById("keyboard-overlay");
+    bars = document.querySelectorAll(".bar");
+    contentDiv = document.getElementById("content-div");
+    contentCover = document.getElementById("content-cover");
+    restartButton = document.getElementById("restart-button");
+    currentStreakElement = document.getElementById("current-streak-num");
+    bestStreakElement = document.getElementById("best-streak-num");
+    playedGamesElement = document.getElementById("played-games-num");
+    wonGamesElement = document.getElementById("won-games-num");
+    winPercentElement = document.getElementById("win-percent");
+    avrTriesElement = document.getElementById("average-tries-num");
 }
 
 let rowList = null;
@@ -60,7 +65,6 @@ let winArr, wins, losses, playedGames, streaks;
 
 let backspaceHold = false;
 
-
 /* if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('serviceworker.js')
         .then(() => console.log("Service Worker registriert"))
@@ -74,16 +78,18 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
     setupFunction();
     try {
         let currentYear = new Date().getFullYear();
-        document.getElementById("copyright-text").innerHTML = `&nbsp;© ${currentYear}`
+        document.getElementById(
+            "copyright-text"
+        ).innerHTML = `&nbsp;© ${currentYear}`;
     } catch (err) {
-        console.error("Fehler bei Datumsabfrage:", err)
+        console.error("Fehler bei Datumsabfrage:", err);
     }
     document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.33";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();
         handleKeyboardPress(event);
-    })
+    });
 
     window.addEventListener("resize", () => {
         setTileDimension();
@@ -100,20 +106,29 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
         }
     });
 
-    contentDiv.addEventListener("touchmove", (event) => {
-        /* event.preventDefault(); */
-        if (event.touches.length == 1) {
-            if (deleteKey.contains(event.target) && backspaceHold) {
-                let delBox = deleteKey.getBoundingClientRect();
-                let touchX = event.touches[0].clientX;
-                let touchY = event.touches[0].clientY;
-                if (touchX < delBox.left || touchX > delBox.right || touchY < delBox.top || touchY > delBox.bottom) {
-                    backspaceHold = false;
-                    clearTimeout(backspaceTimeout);
+    contentDiv.addEventListener(
+        "touchmove",
+        (event) => {
+            /* event.preventDefault(); */
+            if (event.touches.length == 1) {
+                if (deleteKey.contains(event.target) && backspaceHold) {
+                    let delBox = deleteKey.getBoundingClientRect();
+                    let touchX = event.touches[0].clientX;
+                    let touchY = event.touches[0].clientY;
+                    if (
+                        touchX < delBox.left ||
+                        touchX > delBox.right ||
+                        touchY < delBox.top ||
+                        touchY > delBox.bottom
+                    ) {
+                        backspaceHold = false;
+                        clearTimeout(backspaceTimeout);
+                    }
                 }
             }
-        }
-    }, {passive: true})
+        },
+        { passive: true }
+    );
 
     document.addEventListener("touchend", (event) => {
         if (event.cancelable) {
@@ -122,20 +137,19 @@ let startSetup = setAllWordLists(wordLengthArray).then(() => {
         backspaceHold = false;
         clearTimeout(backspaceTimeout);
         /* contentDiv.removeEventListener("touchmove"); */
-    })
+    });
 
     document.addEventListener("touchcancel", (event) => {
         event.preventDefault();
         backspaceHold = false;
         clearTimeout(backspaceTimeout);
         /* contentDiv.removeEventListener("touchmove"); */
-    })
+    });
 
     document.addEventListener("click", (event) => {
         event.preventDefault();
         touchClickInteraction(event);
     });
-
 });
 
 window.addEventListener("DOMContentLoaded", startSetup);
@@ -158,39 +172,50 @@ function setupFunction() {
 
     setWord();
     // add function to change grid layout depending on word length
-    
+
     reBuildGrid(wordLength);
     resizeGrid();
     setTileDimension();
     resetKeyboard();
     resetGridState();
 
-    updateStatData()
-    setActiveTile();        // auto sets the active tile
+    updateStatData();
+    setActiveTile(); // auto sets the active tile
 }
-
 
 // ---------------- touch or click functionality ------------------------
 function touchClickInteraction(event) {
     /* console.log(event); */
 
     if (infoButton.contains(event.target)) {
-        if (statState) { statSwitchFunction() }
-        if (settingsState) { settingsSwitchFunction() }
+        if (statState) {
+            statSwitchFunction();
+        }
+        if (settingsState) {
+            settingsSwitchFunction();
+        }
         infoSwitchFunction();
         return;
     }
 
     if (settingsButton.contains(event.target)) {
-        if (infoState) { infoSwitchFunction() }
-        if (statState) { statSwitchFunction() }
+        if (infoState) {
+            infoSwitchFunction();
+        }
+        if (statState) {
+            statSwitchFunction();
+        }
         settingsSwitchFunction();
         return;
     }
 
     if (statButton.contains(event.target)) {
-        if (infoState) { infoSwitchFunction() }
-        if (settingsState) { settingsSwitchFunction() }
+        if (infoState) {
+            infoSwitchFunction();
+        }
+        if (settingsState) {
+            settingsSwitchFunction();
+        }
         statSwitchFunction();
         return;
     }
@@ -205,7 +230,11 @@ function touchClickInteraction(event) {
         return;
     }
 
-    if (statState && !statBox.contains(event.target) && !switchButton.contains(event.target)) {
+    if (
+        statState &&
+        !statBox.contains(event.target) &&
+        !switchButton.contains(event.target)
+    ) {
         statSwitchFunction();
         return;
     }
@@ -222,17 +251,21 @@ function touchClickInteraction(event) {
     }
 
     if (settingsState) {
-        if (colorSwitchButton.contains(event.target) || (event.type != "click" && altColorRow.contains(event.target))) {
+        if (
+            colorSwitchButton.contains(event.target) ||
+            (event.type != "click" && altColorRow.contains(event.target))
+        ) {
             alternateColorSwitchFunction();
         }
     }
 
     if (!endState) {
-        for (tile of activeRowTiles) { // logic for selecting or deselecting tile by clicking
+        for (tile of activeRowTiles) {
+            // logic for selecting or deselecting tile by clicking
             if (tile.contains(event.target)) {
                 if (removeSelection(tile)) {
                     functionAfterEveryAction();
-                    return
+                    return;
                 } else {
                     removeAllSelection();
                     addSelection(tile);
@@ -241,7 +274,7 @@ function touchClickInteraction(event) {
                 return;
             }
         }
-        if (!(keyboardContainer.contains(event.target))) {
+        if (!keyboardContainer.contains(event.target)) {
             removeAllSelection();
         } else if (selectKey.contains(event.target)) {
             selectSwitch();
@@ -257,7 +290,7 @@ function touchClickInteraction(event) {
         } else if (deleteKey.contains(event.target)) {
             fadeKey(deleteKey);
             backspaceFunction();
-            return
+            return;
         } else if (enterKey.contains(event.target)) {
             fadeKey(enterKey);
             enterFunction();
@@ -310,7 +343,11 @@ function handleKeyboardPress(event) {
                 }
                 return;
             }
-            if (inputKey == " " || inputKey == "ArrowUp" || inputKey == "ArrowDown") {
+            if (
+                inputKey == " " ||
+                inputKey == "ArrowUp" ||
+                inputKey == "ArrowDown"
+            ) {
                 selectSwitch();
                 return;
             }
@@ -347,14 +384,14 @@ function handleKeyboardPress(event) {
 // ------------------ functions -----------------------
 
 function getUserData() {
-    winArr = localStorage.getItem(wordLength + "-winArr"); 
+    winArr = localStorage.getItem(wordLength + "-winArr");
     streaks = { current: 0, best: 0 };
     if (winArr == null) {
         winArr = [0, 0, 0, 0, 0, 0, 0, 0, 0]; // current, best, losses, 1, 2, 3, 4, 5, 6
     } else {
         winArr = winArr.split(",").map(Number);
     }
-/*     console.log(winArr); */
+    /*     console.log(winArr); */
     streaks.current = winArr[0];
     streaks.best = winArr[1];
     losses = winArr[2];
@@ -366,41 +403,44 @@ function getUserData() {
 }
 
 function applyUserSettings() {
-    if (localStorage.getItem("alternateColors") != null && !alternateColorState) {
+    if (
+        localStorage.getItem("alternateColors") != null &&
+        !alternateColorState
+    ) {
         alternateColorSwitchFunction();
     }
 }
 
 function animateStatInt(element, value) {
-    element.style.setProperty("--num", value)
+    element.style.setProperty("--num", value);
     addClasses(element, ["change-num"]);
 }
 
 function updateStatData() {
-/*     console.log(winArr);
+    /*     console.log(winArr);
     console.log("current:", streaks.current);
     console.log("best", streaks.best);
     console.log("losses", losses);
     console.log("wins:", wins); */
 
-
     if (statState) {
-    /*     currentStreakElement.innerText = streaks.current.toString(); */
+        /*     currentStreakElement.innerText = streaks.current.toString(); */
         animateStatInt(currentStreakElement, streaks.current.toString());
 
-    /*     bestStreakElement.innerText = streaks.best.toString(); */
+        /*     bestStreakElement.innerText = streaks.best.toString(); */
         animateStatInt(bestStreakElement, streaks.best.toString());
-    
-    /*     playedGamesElement.innerText = playedGames.toString(); */
+
+        /*     playedGamesElement.innerText = playedGames.toString(); */
         animateStatInt(playedGamesElement, playedGames.toString());
-        
-    /*     wonGamesElement.innerText = wins.toString(); */
+
+        /*     wonGamesElement.innerText = wins.toString(); */
         animateStatInt(wonGamesElement, wins.toString());
     }
 
-/*     winPercentElement.innerText = winPercentStr; */
-    let winPercentStr = ((playedGames == 0) ? "0.00" : ((wins / playedGames) * 100).toFixed(2));
-    
+    /*     winPercentElement.innerText = winPercentStr; */
+    let winPercentStr =
+        playedGames == 0 ? "0.00" : ((wins / playedGames) * 100).toFixed(2);
+
     if (!statState) {
         winPercentElement.style.setProperty("--percent", "0.00");
     } else {
@@ -418,7 +458,7 @@ function updateStatData() {
             highestN = winArr[i];
         }
     }
-    avrTriesStr = ((wins == 0) ? "0.00" : (avrTries / wins).toFixed(2));    
+    avrTriesStr = wins == 0 ? "0.00" : (avrTries / wins).toFixed(2);
     if (!statState) {
         avrTriesElement.style.setProperty("--percent", "0.00");
     } else {
@@ -426,7 +466,6 @@ function updateStatData() {
     }
     addClasses(avrTriesElement, ["change-float"]);
     /* avrTriesElement.innerText = avrTriesStr; */
-
 
     for (let i = 3; i < winArr.length; i++) {
         let bar = document.getElementById("bar-" + (i - 2));
@@ -439,15 +478,18 @@ function updateStatData() {
         let btnStyle = window.getComputedStyle(btnContainer);
         let currBtnTopValue = btnStyle.getPropertyValue("top");
         btnContainer.style.setProperty("--curr-btnh", currBtnTopValue);
-        
+
         if (statState) {
             let barStyle = window.getComputedStyle(bar);
             let currBarHeight = barStyle.getPropertyValue("--percentage");
             if (currBarHeight == "") {
-                currBarHeight = "0%"
+                currBarHeight = "0%";
             }
             bar.style.setProperty("--prev-px", currBarHeight);
-            let barPercent = ((highestN == 0) ? 0 : parseFloat((winArr[i] / highestN * 100).toFixed(2)));
+            let barPercent =
+                highestN == 0
+                    ? 0
+                    : parseFloat(((winArr[i] / highestN) * 100).toFixed(2));
             let barPercentStr = barPercent + "%";
             bar.style.setProperty("--percentage", barPercentStr);
             bar.style.setProperty("height", barPercentStr);
@@ -455,8 +497,6 @@ function updateStatData() {
             animateStatInt(barTopNum, winArr[i]);
             /* barTopNum.innerText = winArr[i]; */
         }
-
-
     }
 
     // adjust bar top num "top"-offset based on bar height
@@ -467,7 +507,10 @@ function updateStatData() {
         let barHeight = document.getElementById("bar-" + (i - 2)).offsetHeight;
         if (barTopNumHeight > barHeight) {
             btnContainer.style.setProperty("top", "-" + barTopNumHeight + "px");
-            btnContainer.style.setProperty("--new-btnh", "-" + barTopNumHeight + "px");
+            btnContainer.style.setProperty(
+                "--new-btnh",
+                "-" + barTopNumHeight + "px"
+            );
         } else {
             btnContainer.style.setProperty("--new-btnh", "0px");
         }
@@ -478,9 +521,14 @@ function updateStatData() {
             let bar = document.getElementById("bar-" + (i - 2));
             addClasses(bar, ["change-bar"]);
 
-            let btnContainer = document.getElementById("btn-container-" + (i - 2));
+            let btnContainer = document.getElementById(
+                "btn-container-" + (i - 2)
+            );
             let btnStyle = window.getComputedStyle(btnContainer);
-            if (btnStyle.getPropertyValue("--curr-btnh") != btnStyle.getPropertyValue("--new-btnh")) {
+            if (
+                btnStyle.getPropertyValue("--curr-btnh") !=
+                btnStyle.getPropertyValue("--new-btnh")
+            ) {
                 addClasses(btnContainer, ["change-btnh"]);
             }
         }
@@ -502,7 +550,7 @@ function setTileDimension() {
     let fontSizeString = tileFontSize.toString() + "px";
     let tileFontSizeRule = getCssRulesFor(".letter-box");
     tileFontSizeRule.style.setProperty("font-size", fontSizeString);
-   
+
     // set tile margin
     let tileRules = getCssRulesFor(".tile");
     let tileMarginStr = (tileWidth / 40).toFixed(1) + "px";
@@ -519,16 +567,19 @@ function resizeGrid(itr = 0) {
     }
     let contentHeight = getContentHeight();
     let windowHeight = window.innerHeight;
-/*     console.log(gameHeight);
+    /*     console.log(gameHeight);
     console.log(windowHeight); */
     if (contentHeight > windowHeight) {
         let gridContainerRules = getCssRulesFor(".grid-container");
-        let currentWidthString = gridContainerRules.style.getPropertyValue("width");
-        let currentWidth = Math.ceil(parseFloat(currentWidthString.slice(0, -1)));
+        let currentWidthString =
+            gridContainerRules.style.getPropertyValue("width");
+        let currentWidth = Math.ceil(
+            parseFloat(currentWidthString.slice(0, -1))
+        );
         if (currentWidth < 20) {
             return;
         }
-        let widthStr = (currentWidth - 1) + "%";
+        let widthStr = currentWidth - 1 + "%";
         /* console.log(widthStr); */
         gridContainerRules.style.setProperty("width", widthStr);
     } else {
@@ -571,7 +622,7 @@ function reBuildGrid(wl) {
     let newLetterBox = document.createElement("div");
     addClasses(newLetterBox, ["letter-box"]);
     newTile.appendChild(newLetterBox); */
-    
+
     for (let i = 0; i < nTries; i++) {
         let newRow = document.createElement("div");
         addClasses(newRow, ["row", "grid-row"]);
@@ -594,7 +645,7 @@ function reBuildGrid(wl) {
 function resetGridState() {
     unsetEndState();
     let strWrdLst = localStorage.getItem(wordLength + "-inputWords");
-/*     localStorage.removeItem(wordLenght + "-inputWords"); */
+    /*     localStorage.removeItem(wordLenght + "-inputWords"); */
     if (strWrdLst == null) {
         return;
     }
@@ -603,7 +654,8 @@ function resetGridState() {
     for (let x = 0; x < i; x++) {
         for (let n = 0; n < wordLength; n++) {
             let revealWord = "";
-            rowList[x].children[n].children[0].innerText = wordArr[x][n]/* .toUpperCase() */;
+            rowList[x].children[n].children[0].innerText =
+                wordArr[x][n] /* .toUpperCase() */;
             revealWord += wordArr[x][n];
         }
         enterFunction(true);
@@ -636,7 +688,7 @@ function activeRowFull() {
 
 function removeSelection(tile) {
     if (hasClass(tile, "selected")) {
-        tile.classList.remove("selected")
+        tile.classList.remove("selected");
         removeClasses(selectKey, ["selection-active"]);
         return true;
     }
@@ -652,7 +704,7 @@ function removeAllSelection() {
     if (!endState) {
         activeRowTiles.forEach((tile) => {
             removeSelection(tile);
-        })
+        });
     }
 }
 
@@ -676,10 +728,10 @@ function selectionToRight() {
     if (!endState) {
         let ati = getActiveTileIndex();
         removeAllSelection();
-        if (ati == undefined || ati == (wordLength - 1)) {
-            addSelection(activeRowTiles[0])
-        } else if (ati < (wordLength - 1)) {
-            addSelection(activeRowTiles[ati + 1])
+        if (ati == undefined || ati == wordLength - 1) {
+            addSelection(activeRowTiles[0]);
+        } else if (ati < wordLength - 1) {
+            addSelection(activeRowTiles[ati + 1]);
         }
         functionAfterEveryAction();
     }
@@ -690,9 +742,9 @@ function selectionToLeft() {
         let ati = getActiveTileIndex();
         removeAllSelection();
         if (ati == undefined || ati == 0) {
-            addSelection(activeRowTiles[wordLength - 1])
+            addSelection(activeRowTiles[wordLength - 1]);
         } else if (ati > 0) {
-            addSelection(activeRowTiles[ati - 1])
+            addSelection(activeRowTiles[ati - 1]);
         }
         functionAfterEveryAction();
     }
@@ -712,21 +764,27 @@ function storeInputWord(inpWrd) {
 function backspaceFunction() {
     if (!endState) {
         let ati = getActiveTileIndex();
-        if (ati == undefined) { // clear last tile if all contain letter
-            activeRowTiles[activeRowTiles.length - 1].children[0].innerText = "";
-        } else if (activeRowTiles[ati].children[0].innerText != "") { // clear letter in act tile
+        if (ati == undefined) {
+            // clear last tile if all contain letter
+            activeRowTiles[activeRowTiles.length - 1].children[0].innerText =
+                "";
+        } else if (activeRowTiles[ati].children[0].innerText != "") {
+            // clear letter in act tile
             activeRowTiles[ati].children[0].innerText = "";
-        } else if (ati != 0 && activeRowTiles[ati].children[0].innerText == "") {
+        } else if (
+            ati != 0 &&
+            activeRowTiles[ati].children[0].innerText == ""
+        ) {
             if (removeSelection(activeRowTiles[ati])) {
                 addSelection(activeRowTiles[ati - 1]);
             }
-            activeRowTiles[ati - 1].children[0].innerText = ""
+            activeRowTiles[ati - 1].children[0].innerText = "";
         } else if (ati == 0) {
             removeSelection(activeRowTiles[ati], ["selected"]);
             wiggleActiveRow();
         }
         functionAfterEveryAction();
-    } 
+    }
 }
 
 function enterFunction(resetState = false) {
@@ -738,8 +796,11 @@ function enterFunction(resetState = false) {
             }
             let itr = 0;
             inpStr = inpStr.toLowerCase();
-            if (words.includes(inpStr.toLowerCase()) || word == inpStr || resetState) {
-                
+            if (
+                words.includes(inpStr.toLowerCase()) ||
+                word == inpStr ||
+                resetState
+            ) {
                 let cs = getColors(inpStr, word);
                 revealTilesAndKeys(cs, inpStr);
 
@@ -747,7 +808,8 @@ function enterFunction(resetState = false) {
                     storeInputWord(inpStr);
                 }
 
-                if (word == inpStr) { // win logic
+                if (word == inpStr) {
+                    // win logic
                     removeAllSelection();
                     cleanActiveTiles();
                     activeRowTiles = null;
@@ -755,11 +817,12 @@ function enterFunction(resetState = false) {
                     for (let row of rowList) {
                         if (removeClasses(row, ["activerow"])) {
                             break;
-                        }                       
+                        }
                         winRow++;
                     }
 
-                    if (!resetState) { // do not update stats while loading grid state
+                    if (!resetState) {
+                        // do not update stats while loading grid state
                         playedGames++;
                         wins++;
                         winArr[winRow + 2]++;
@@ -781,7 +844,6 @@ function enterFunction(resetState = false) {
                     } else {
                         setEndState(`Gewonnen in ${winRow} Versuchen!`);
                     }
-                    
                 }
                 for (let row of rowList) {
                     if (hasClass(row, "activerow")) {
@@ -789,22 +851,26 @@ function enterFunction(resetState = false) {
                         cleanActiveTiles();
                         removeClasses(row, ["activerow"]);
 
-                        if (itr == rowList.length - 1) { // if last guess
+                        if (itr == rowList.length - 1) {
+                            // if last guess
                             activeRowTiles = null;
-                            setEndState(word.toUpperCase() + " . . .") // loseState
-                
-                            if (!resetState) { // do not update stats while loading grid state
+                            setEndState(word.toUpperCase() + " . . ."); // loseState
+
+                            if (!resetState) {
+                                // do not update stats while loading grid state
                                 playedGames++;
                                 losses++;
                                 winArr[2] = losses;
-				                streaks.current = 0;
-			    	            winArr[0] = streaks.current;
+                                streaks.current = 0;
+                                winArr[0] = streaks.current;
                                 // update win arr
-                                localStorage.setItem(wordLength + "-winArr", winArr);
+                                localStorage.setItem(
+                                    wordLength + "-winArr",
+                                    winArr
+                                );
                                 updateStatData();
                             }
                             break;
-
                         } else {
                             rowList[itr + 1].classList.add("activerow"); // advance active row
                             getActiveRowTiles();
@@ -816,8 +882,7 @@ function enterFunction(resetState = false) {
             } else {
                 setErrorMessage("Nicht in der Wortliste!");
             }
-        }
-        else {
+        } else {
             setErrorMessage("Zu wenige Buchstaben!");
         }
     }
@@ -826,26 +891,44 @@ function enterFunction(resetState = false) {
 function alternateColorSwitchFunction() {
     alternateColorState = !alternateColorState;
     let rootCssRules = getCssRulesFor(":root");
-    if (alternateColorState) { // set alternative colors
+    if (alternateColorState) {
+        // set alternative colors
         localStorage.setItem("alternateColors", "y");
         addClasses(colorSwitchButton, ["toggle-switch-on"]);
         removeClasses(colorSwitchButton, ["toggle-switch-off"]);
         rootCssRules.style.setProperty("--tile-green", "rgb(196, 19, 93)");
-        rootCssRules.style.setProperty("--tile-green-80", "rgba(196, 19, 93, 0.8)");
-        document.getElementById("about-green-text").textContent = "pinker Buchstabe";
+        rootCssRules.style.setProperty(
+            "--tile-green-80",
+            "rgba(196, 19, 93, 0.8)"
+        );
+        document.getElementById("about-green-text").textContent =
+            "pinker Buchstabe";
         rootCssRules.style.setProperty("--tile-yellow", "rgb(31, 124, 167)");
-        rootCssRules.style.setProperty("--tile-yellow-80", "rgba(31, 124, 167, 0.8)");
-        document.getElementById("about-yellow-text").textContent = "blauer Buchstabe";
-    } else { // set normal colors
+        rootCssRules.style.setProperty(
+            "--tile-yellow-80",
+            "rgba(31, 124, 167, 0.8)"
+        );
+        document.getElementById("about-yellow-text").textContent =
+            "blauer Buchstabe";
+    } else {
+        // set normal colors
         localStorage.removeItem("alternateColors");
         addClasses(colorSwitchButton, ["toggle-switch-off"]);
         removeClasses(colorSwitchButton, ["toggle-switch-on"]);
         rootCssRules.style.setProperty("--tile-green", "rgb(58, 134, 61)");
-        rootCssRules.style.setProperty("--tile-green-80", "rgba(58, 134, 60, 0.8)");
-        document.getElementById("about-green-text").textContent = "grüner Buchstabe";
+        rootCssRules.style.setProperty(
+            "--tile-green-80",
+            "rgba(58, 134, 60, 0.8)"
+        );
+        document.getElementById("about-green-text").textContent =
+            "grüner Buchstabe";
         rootCssRules.style.setProperty("--tile-yellow", "rgb(219, 146, 0)");
-        rootCssRules.style.setProperty("--tile-yellow-80", "rgba(219, 146, 0, 0.8)");
-        document.getElementById("about-yellow-text").textContent = "gelber Buchstabe";
+        rootCssRules.style.setProperty(
+            "--tile-yellow-80",
+            "rgba(219, 146, 0, 0.8)"
+        );
+        document.getElementById("about-yellow-text").textContent =
+            "gelber Buchstabe";
     }
 }
 
@@ -854,12 +937,13 @@ function setEndState(endMessage) {
     keyboardOverlay.style.setProperty("visibility", "visible");
     addClasses(restartButton, ["rotate"]);
     document.getElementById("end-message-paragraph").innerText = endMessage;
-
 }
 
 function unsetEndState() {
     endState = false;
-    document.getElementById("keyboard-overlay").style.setProperty("visibility", "hidden");
+    document
+        .getElementById("keyboard-overlay")
+        .style.setProperty("visibility", "hidden");
     removeClasses(restartButton, ["rotate"]);
     document.getElementById("end-message-paragraph").innerText = "";
 }
@@ -887,22 +971,24 @@ function clearActiveRow() {
 
 function fadeKey(keyObj) {
     removeClasses(keyObj, ["fading-key"]);
-    keyObj.style.animation = 'none';
-    setTimeout (() => {
-        keyObj.style.animation = "";;
+    keyObj.style.animation = "none";
+    setTimeout(() => {
+        keyObj.style.animation = "";
     }, 5);
     addClasses(keyObj, ["fading-key"]);
 }
 
 function repressDeleteKey(itr = 0) {
-    if (itr > 10) {return};
-    let ms = (itr == 0) ? 400 : 40;
+    if (itr > 10) {
+        return;
+    }
+    let ms = itr == 0 ? 400 : 40;
     backspaceTimeout = setTimeout(() => {
         if (backspaceHold) {
             fadeKey(deleteKey);
             backspaceFunction();
             repressDeleteKey(itr + 1);
-        }    
+        }
     }, ms);
 }
 
@@ -949,13 +1035,13 @@ function resetGrid() {
     }
     addClasses(rowList[0], ["activerow"]);
     for (let tile of allTiles) {
-        if (!hasClass(tile, "about-tile") ) {
+        if (!hasClass(tile, "about-tile")) {
             removeClasses(tile, ["bg-green", "bg-yellow", "bg-dark"]);
             tile.children[0].innerText = "";
         }
     }
     resetKeyboard();
-    unsetEndState()
+    unsetEndState();
     localStorage.removeItem(wordLength + "-word");
     localStorage.removeItem(wordLength + "-inputWords");
     getActiveRowTiles();
@@ -995,8 +1081,9 @@ function switchFunction() {
     setupFunction();
 }
 
-function statSwitchFunction() {    
-    if (statState) { // do the following if stat state is being deactivated
+function statSwitchFunction() {
+    if (statState) {
+        // do the following if stat state is being deactivated
         statState = false;
         contentCover.style.setProperty("visibility", "hidden");
         statBox.style.visibility = "hidden";
@@ -1020,7 +1107,7 @@ function statSwitchFunction() {
             bar.style.removeProperty("height");
             bar.style.removeProperty("--prev-px");
         }
-        return
+        return;
     }
     // do the following if stat state is being activated
     statState = true;
@@ -1071,13 +1158,11 @@ function settingsSwitchFunction() {
 
 function getCssRulesFor(styleString) {
     let stylesheet = document.styleSheets[0];
-    return [...stylesheet.cssRules].find(
-        (r) => r.selectorText === styleString,
-    )
+    return [...stylesheet.cssRules].find((r) => r.selectorText === styleString);
 }
 
 function hasClass(obj, className) {
-    return obj.classList.contains(className); 
+    return obj.classList.contains(className);
 }
 
 function removeClasses(obj, classNameArr) {
@@ -1093,14 +1178,13 @@ function removeClasses(obj, classNameArr) {
 
 function addClasses(obj, classNameArr) {
     for (let cl of classNameArr) {
-         obj.classList.add(cl);
+        obj.classList.add(cl);
     }
 }
 
 function functionAfterEveryAction() {
     setActiveTile();
 }
-
 
 // ------- fetch word list ------------------------------------------------
 async function setAllWordLists(validWordLengthArray) {
@@ -1117,35 +1201,34 @@ async function setAllWordLists(validWordLengthArray) {
             }
         }
     } catch (error) {
-        console.error('Error in setAllWordList:', error);
+        console.error("Error in setAllWordList:", error);
     }
 }
 
 async function fetchWordArray(n) {
     let wordListPath = "assets/wordlists/" + n + "-letter-words.txt";
     try {
-      // Fetch the words.txt file from the local web server
-      let response = await fetch(wordListPath);
-      
-      // Ensure the request was successful
-      if (!response.ok) {
-        throw new Error('Failed to fetch wordlist');
-      }
-  
-      // Get the text content of the file
-      let text = await response.text();
-  
-      // Split the content into an array of words (splitting by newlines)
-      let wordsArray = text.split('\n');
-  
-      // Remove any extra spaces or empty lines
-      wordsArray = wordsArray.map(s => s.replace(/\r/g, ''));
-  
-      return wordsArray;
-  
+        // Fetch the words.txt file from the local web server
+        let response = await fetch(wordListPath);
+
+        // Ensure the request was successful
+        if (!response.ok) {
+            throw new Error("Failed to fetch wordlist");
+        }
+
+        // Get the text content of the file
+        let text = await response.text();
+
+        // Split the content into an array of words (splitting by newlines)
+        let wordsArray = text.split("\n");
+
+        // Remove any extra spaces or empty lines
+        wordsArray = wordsArray.map((s) => s.replace(/\r/g, ""));
+
+        return wordsArray;
     } catch (error) {
-      console.error('Error fetching or processing the file:', error);
-      return null;
+        console.error("Error fetching or processing the file:", error);
+        return null;
     }
 }
 
@@ -1154,7 +1237,7 @@ function wiggleActiveRow() {
     removeClasses(activeRow, ["wiggle-row"]);
     setTimeout(() => {
         addClasses(activeRow, ["wiggle-row"]);
-    }, 0)
+    }, 0);
 }
 
 function setErrorMessage(message) {
@@ -1166,7 +1249,7 @@ function setErrorMessage(message) {
     errorAfterRules.style.content = `"${message}"`;
 
     hideErrorMessageFn = setTimeout(() => {
-        hideErrorMessage()
+        hideErrorMessage();
     }, 1500);
 }
 
@@ -1181,7 +1264,6 @@ function hideErrorMessage() {
 function numberOfLetterInWord(letter, word) {
     return word.split("").filter((char) => char === letter).length;
 }
-
 
 function getColors(inputWord, hiddenWord) {
     if (inputWord === hiddenWord) {
@@ -1201,15 +1283,15 @@ function getColors(inputWord, hiddenWord) {
                 if (hiddenWord[j] === inputLetter) {
                     outputArray[j] = "hit";
                 } else if (diff < 1) {
-                outputArray[j] = "close";
+                    outputArray[j] = "close";
                 } else {
-                outputArray[j] = "miss";
-                diff--;
+                    outputArray[j] = "miss";
+                    diff--;
                 }
             }
         }
     }
-    return(outputArray);
+    return outputArray;
 }
 
 function revealTilesAndKeys(colorString, inputWord) {
@@ -1223,7 +1305,9 @@ function revealTilesAndKeys(colorString, inputWord) {
                 break;
             case "close":
                 addClasses(activeRowTiles[i], ["bg-yellow"]);
-                if (!hasClass(aKey, "bg-green")) {  addClasses(aKey, ["bg-yellow"]); }
+                if (!hasClass(aKey, "bg-green")) {
+                    addClasses(aKey, ["bg-yellow"]);
+                }
                 break;
             case "miss":
                 addClasses(activeRowTiles[i], ["bg-dark"]);
@@ -1231,6 +1315,6 @@ function revealTilesAndKeys(colorString, inputWord) {
                 break;
             default:
                 continue;
-        } 
+        }
     }
 }
