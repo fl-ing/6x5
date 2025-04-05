@@ -538,6 +538,7 @@ body {
 }
 
 .activerow::after {
+    z-index: 1;
     content: "";
     font-size: 3.5vw;
     visibility: hidden;

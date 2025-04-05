@@ -615,14 +615,6 @@ function randomWord(w) {
 function reBuildGrid(wl) {
     let grid = document.getElementById("grid");
     grid.innerHTML = "";
-    /* let newRow = document.createElement("div");
-    addClasses(newRow, ["row", "grid-row"]);
-    let newTile = document.createElement("div");
-    addClasses(newTile, ["tile", "grid-tile"]);
-    let newLetterBox = document.createElement("div");
-    addClasses(newLetterBox, ["letter-box"]);
-    newTile.appendChild(newLetterBox); */
-
     for (let i = 0; i < nTries; i++) {
         let newRow = document.createElement("div");
         addClasses(newRow, ["row", "grid-row"]);
@@ -645,7 +637,6 @@ function reBuildGrid(wl) {
 function resetGridState() {
     unsetEndState();
     let strWrdLst = localStorage.getItem(wordLength + "-inputWords");
-    /*     localStorage.removeItem(wordLenght + "-inputWords"); */
     if (strWrdLst == null) {
         return;
     }
@@ -654,8 +645,7 @@ function resetGridState() {
     for (let x = 0; x < i; x++) {
         for (let n = 0; n < wordLength; n++) {
             let revealWord = "";
-            rowList[x].children[n].children[0].innerText =
-                wordArr[x][n] /* .toUpperCase() */;
+            rowList[x].children[n].children[0].innerText = wordArr[x][n];
             revealWord += wordArr[x][n];
         }
         enterFunction(true);
