@@ -548,7 +548,7 @@ function setTileDimension() {
     let tileWidth = document.querySelector(".tile").offsetWidth;
     let tileFontSize = Math.floor(tileWidth * 0.66);
     let fontSizeString = tileFontSize.toString() + "px";
-    let tileFontSizeRule = getCssRulesFor(".letter-box");
+    let tileFontSizeRule = getCssRulesFor(".tile");
     tileFontSizeRule.style.setProperty("font-size", fontSizeString);
 
     // set tile margin
@@ -621,9 +621,6 @@ function reBuildGrid(wl) {
         for (let i = 0; i < wl; i++) {
             let newTile = document.createElement("div");
             addClasses(newTile, ["tile", "grid-tile"]);
-            let newLetterBox = document.createElement("div");
-            addClasses(newLetterBox, ["letter-box"]);
-            newTile.appendChild(newLetterBox);
             newRow.appendChild(newTile);
         }
         grid.appendChild(newRow);
@@ -645,7 +642,7 @@ function resetGridState() {
     for (let x = 0; x < i; x++) {
         for (let n = 0; n < wordLength; n++) {
             let revealWord = "";
-            rowList[x].children[n].children[0].innerText = wordArr[x][n];
+            rowList[x].children[n].innerText = wordArr[x][n];
             revealWord += wordArr[x][n];
         }
         enterFunction(true);
@@ -756,19 +753,15 @@ function backspaceFunction() {
         let ati = getActiveTileIndex();
         if (ati == undefined) {
             // clear last tile if all contain letter
-            activeRowTiles[activeRowTiles.length - 1].children[0].innerText =
-                "";
-        } else if (activeRowTiles[ati].children[0].innerText != "") {
+            activeRowTiles[activeRowTiles.length - 1].innerText = "";
+        } else if (activeRowTiles[ati].innerText != "") {
             // clear letter in act tile
-            activeRowTiles[ati].children[0].innerText = "";
-        } else if (
-            ati != 0 &&
-            activeRowTiles[ati].children[0].innerText == ""
-        ) {
+            activeRowTiles[ati].innerText = "";
+        } else if (ati != 0 && activeRowTiles[ati].innerText == "") {
             if (removeSelection(activeRowTiles[ati])) {
                 addSelection(activeRowTiles[ati - 1]);
             }
-            activeRowTiles[ati - 1].children[0].innerText = "";
+            activeRowTiles[ati - 1].innerText = "";
         } else if (ati == 0) {
             removeSelection(activeRowTiles[ati], ["selected"]);
             wiggleActiveRow();
@@ -782,7 +775,7 @@ function enterFunction(resetState = false) {
         if (activeRowFull()) {
             let inpStr = "";
             for (let tile of activeRowTiles) {
-                inpStr += tile.children[0].innerHTML;
+                inpStr += tile.innerHTML;
             }
             let itr = 0;
             inpStr = inpStr.toLowerCase();
@@ -942,7 +935,7 @@ function writeActiveTile(letter) {
     if (!endState) {
         for (let tile of activeRowTiles) {
             if (hasClass(tile, "active")) {
-                tile.children[0].innerText = letter;
+                tile.innerText = letter;
                 functionAfterEveryAction();
                 return;
             }
@@ -953,7 +946,7 @@ function writeActiveTile(letter) {
 function clearActiveRow() {
     if (!endState) {
         for (tile of activeRowTiles) {
-            tile.children[0].innerText = "";
+            tile.innerText = "";
         }
         functionAfterEveryAction();
     }
@@ -1027,7 +1020,7 @@ function resetGrid() {
     for (let tile of allTiles) {
         if (!hasClass(tile, "about-tile")) {
             removeClasses(tile, ["bg-green", "bg-yellow", "bg-dark"]);
-            tile.children[0].innerText = "";
+            tile.innerText = "";
         }
     }
     resetKeyboard();

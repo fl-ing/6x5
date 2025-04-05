@@ -571,6 +571,9 @@ body {
 } */
 
 .tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: var(--tile-background-grey);
     border: 0.2vw solid var(--neutral-grey);
     border-radius: 5%;
@@ -579,6 +582,8 @@ body {
     aspect-ratio: 1;
     align-content: center;
     font-weight: 600;
+    font-size: 280%;
+    text-transform: uppercase;
     color: var(--almost-white);
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
 }
@@ -605,12 +610,6 @@ div.row:last-child > * {
 
 .tile.selected {
     background-color: var(--blueish-grey);
-}
-
-.letter-box {
-    width: 100%;
-    font-size: 280%;
-    text-transform: uppercase;
 }
 
 .keyboard-section {
