@@ -940,6 +940,7 @@ function writeActiveTile(letter) {
                 return;
             }
         }
+        wiggleActiveRow();
     }
 }
 
