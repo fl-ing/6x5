@@ -179,7 +179,7 @@ function setupFunction() {
     resetKeyboard();
     resetGridState();
 
-    updateStatData();
+    updateStatBoxData();
     setActiveTile(); // auto sets the active tile
 }
 
@@ -416,7 +416,7 @@ function animateStatInt(element, value) {
     addClasses(element, ["change-num"]);
 }
 
-function updateStatData() {
+function updateStatBoxData() {
     /*     console.log(winArr);
     console.log("current:", streaks.current);
     console.log("best", streaks.best);
@@ -771,103 +771,101 @@ function backspaceFunction() {
 }
 
 function enterFunction(resetState = false) {
-    if (!endState) {
-        if (activeRowFull()) {
-            let inpStr = "";
-            for (let tile of activeRowTiles) {
-                inpStr += tile.innerHTML;
+    if (endState) {
+        return;
+    }
+
+    if (!activeRowFull()) {
+        setErrorMessage("Zu wenige Buchstaben!");
+        return;
+    }
+
+    let inpStr = "";
+    for (let tile of activeRowTiles) {
+        inpStr += tile.innerText;
+    }
+    inpStr = inpStr.toLowerCase();
+
+    if (words.includes(inpStr) || word == inpStr || resetState) {
+        let cs = getColors(inpStr, word);
+        revealTilesAndKeys(cs, inpStr);
+
+        if (!resetState) {
+            storeInputWord(inpStr);
+        }
+
+        let currRowNum = getActiveRowNum();
+        removeAllSelection();
+        cleanActiveTiles();
+        activeRowTiles = null;
+        removeClasses(document.querySelector(".activerow"), ["activerow"]);
+
+        // win logic
+        if (word == inpStr) {
+            if (!resetState) {
+                // do not update stats while loading grid state
+                updateWinArr(currRowNum);
+                localStorage.setItem(wordLength + "-winArr", winArr);
+                updateStatBoxData();
             }
-            let itr = 0;
-            inpStr = inpStr.toLowerCase();
-            if (
-                words.includes(inpStr.toLowerCase()) ||
-                word == inpStr ||
-                resetState
-            ) {
-                let cs = getColors(inpStr, word);
-                revealTilesAndKeys(cs, inpStr);
 
-                if (!resetState) {
-                    storeInputWord(inpStr);
-                }
-
-                if (word == inpStr) {
-                    // win logic
-                    removeAllSelection();
-                    cleanActiveTiles();
-                    activeRowTiles = null;
-                    let winRow = 1;
-                    for (let row of rowList) {
-                        if (removeClasses(row, ["activerow"])) {
-                            break;
-                        }
-                        winRow++;
-                    }
-
-                    if (!resetState) {
-                        // do not update stats while loading grid state
-                        playedGames++;
-                        wins++;
-                        winArr[winRow + 2]++;
-                        streaks.current++;
-                        if (streaks.current > streaks.best) {
-                            streaks.best = streaks.current;
-                        }
-                        winArr[0] = streaks.current;
-                        winArr[1] = streaks.best;
-                        // update win arr
-                        localStorage.setItem(wordLength + "-winArr", winArr);
-                        updateStatData();
-                    }
-
-                    if (winRow == 1) {
-                        setEndState(`WOW!\nGlückspilz :)`);
-                    } else if (winRow == nTries) {
-                        setEndState(`Puh, knapp!\n${winRow} Versuche!`);
-                    } else {
-                        setEndState(`Gewonnen in ${winRow} Versuchen!`);
-                    }
-                }
-                for (let row of rowList) {
-                    if (hasClass(row, "activerow")) {
-                        removeAllSelection();
-                        cleanActiveTiles();
-                        removeClasses(row, ["activerow"]);
-
-                        if (itr == rowList.length - 1) {
-                            // if last guess
-                            activeRowTiles = null;
-                            setEndState(word.toUpperCase() + " . . ."); // loseState
-
-                            if (!resetState) {
-                                // do not update stats while loading grid state
-                                playedGames++;
-                                losses++;
-                                winArr[2] = losses;
-                                streaks.current = 0;
-                                winArr[0] = streaks.current;
-                                // update win arr
-                                localStorage.setItem(
-                                    wordLength + "-winArr",
-                                    winArr
-                                );
-                                updateStatData();
-                            }
-                            break;
-                        } else {
-                            rowList[itr + 1].classList.add("activerow"); // advance active row
-                            getActiveRowTiles();
-                            break;
-                        }
-                    }
-                    itr += 1;
-                }
+            if (currRowNum == 1) {
+                setEndState(`WOW!\nGlückspilz :)`);
+            } else if (currRowNum == nTries) {
+                setEndState(`Puh, knapp!\n${currRowNum} Versuche!`);
             } else {
-                setErrorMessage("Nicht in der Wortliste!");
+                setEndState(`Gewonnen in ${currRowNum} Versuchen!`);
+            }
+            return;
+        }
+
+        // wrong word entered
+        if (currRowNum == nTries) {
+            // if last guess
+            setEndState(word.toUpperCase() + " . . ."); // loseState
+            if (!resetState) {
+                // do not update stats while loading grid state
+                updateWinArr(0);
+                localStorage.setItem(wordLength + "-winArr", winArr);
+                updateStatBoxData();
             }
         } else {
-            setErrorMessage("Zu wenige Buchstaben!");
+            addClasses(rowList[currRowNum], ["activerow"]); // advance active row
+            getActiveRowTiles();
         }
+    } else {
+        setErrorMessage("Nicht in der Wortliste!");
+    }
+}
+
+function getActiveRowNum() {
+    let wr = 0;
+    for (let row of rowList) {
+        wr++;
+        if (hasClass(row, "activerow")) {
+            break;
+        }
+    }
+    return wr;
+}
+
+function updateWinArr(wr) {
+    console.log(wr);
+    playedGames++;
+    if (wr == 0) {
+        losses++;
+        winArr[2] = losses;
+        streaks.current = 0;
+        winArr[0] = streaks.current;
+    } else {
+        wins++;
+        streaks.current++;
+        if (streaks.current > streaks.best) {
+            streaks.best = streaks.current;
+        }
+        winArr[0] = streaks.current;
+        winArr[1] = streaks.best;
+        winArr[wr + 2]++;
     }
 }
 
@@ -977,7 +975,7 @@ function repressDeleteKey(itr = 0) {
 }
 
 function cleanActiveTiles() {
-    if (!endState) {
+    if (activeRowTiles !== null) {
         for (let tile of activeRowTiles) {
             removeClasses(tile, ["active"]);
         }
@@ -1094,13 +1092,14 @@ function statSwitchFunction() {
         return;
     }
     // do the following if stat state is being activated
+    hideErrorMessage();
     statState = true;
     contentCover.style.setProperty("visibility", "visible");
     addClasses(statButton, ["active-side-button"]);
     statBox.style.visibility = "visible";
     settingsButton.style.visibility = "hidden";
     infoButton.style.visibility = "hidden";
-    updateStatData();
+    updateStatBoxData();
 }
 
 function infoSwitchFunction() {
@@ -1113,6 +1112,7 @@ function infoSwitchFunction() {
         infoBox.style.visibility = "hidden";
         return;
     }
+    hideErrorMessage();
     infoState = true;
     contentCover.style.setProperty("visibility", "visible");
     switchButton.style.setProperty("visibility", "hidden");
@@ -1132,6 +1132,7 @@ function settingsSwitchFunction() {
         settingsBox.style.visibility = "hidden";
         return;
     }
+    hideErrorMessage();
     settingsState = true;
     contentCover.style.setProperty("visibility", "visible");
     switchButton.style.setProperty("visibility", "hidden");
@@ -1280,25 +1281,25 @@ function getColors(inputWord, hiddenWord) {
 
 function revealTilesAndKeys(colorString, inputWord) {
     for (let i = 0; i < colorString.length; i++) {
+        if (colorString[i] == "hit") {
+            addClasses(activeRowTiles[i], ["bg-green"]);
+        } else if (colorString[i] == "close") {
+            addClasses(activeRowTiles[i], ["bg-yellow"]);
+        } else if (colorString[i] == "miss") {
+            addClasses(activeRowTiles[i], ["bg-dark"]);
+        }
+    }
+    for (let i = 0; i < colorString.length; i++) {
         let aKey = document.getElementById(inputWord[i] + "-key");
-        switch (colorString[i]) {
-            case "hit":
-                addClasses(activeRowTiles[i], ["bg-green"]);
-                addClasses(aKey, ["bg-green"]);
-                removeClasses(aKey, ["bg-yellow"]);
-                break;
-            case "close":
-                addClasses(activeRowTiles[i], ["bg-yellow"]);
-                if (!hasClass(aKey, "bg-green")) {
-                    addClasses(aKey, ["bg-yellow"]);
-                }
-                break;
-            case "miss":
-                addClasses(activeRowTiles[i], ["bg-dark"]);
-                addClasses(aKey, ["bg-dark"]);
-                break;
-            default:
-                continue;
+        if (colorString[i] == "hit") {
+            addClasses(aKey, ["bg-green"]);
+            removeClasses(aKey, ["bg-yellow"]);
+        } else if (colorString[i] == "close") {
+            if (!hasClass(aKey, "bg-green")) {
+                addClasses(aKey, ["bg-yellow"]);
+            }
+        } else if (colorString[i] == "miss") {
+            addClasses(aKey, ["bg-dark"]);
         }
     }
 }
