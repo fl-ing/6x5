@@ -660,12 +660,9 @@ function resetGridState() {
         return;
     }
     wordArr = JSON.parse(strWrdLst);
-    let i = wordArr.length;
-    for (let x = 0; x < i; x++) {
-        for (let n = 0; n < wordLength; n++) {
-            let revealWord = "";
-            rowList[x].children[n].innerText = wordArr[x][n];
-            revealWord += wordArr[x][n];
+    for (let i = 0; i < wordArr.length; i++) {
+        for (let j = 0; j < wordLength; j++) {
+            rowList[i].children[j].innerText = wordArr[i][j];
         }
         enterFunction(true);
     }
@@ -1332,7 +1329,6 @@ function getColors(inputWord, hiddenWord) {
 }
 
 function revealTiles(colorString, inpStr, resetState = false) {
-    console.log(inpStr);
     removeAllSelection();
     cleanActiveTiles();
     let intervalTime = 200;
