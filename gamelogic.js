@@ -760,6 +760,10 @@ function selectionToLeft() {
 }
 
 function storeInputWord(inpWrd) {
+    if (inpWrd.length !== wordLength) {
+        console.error("Will not store Word because of wrong word length");
+        return;
+    }
     let strWrdArr = localStorage.getItem(wordLength + "-inputWords");
     if (strWrdArr == null) {
         strWrdArr = JSON.stringify([]);
@@ -855,11 +859,13 @@ function afterReveal(cs, inpStr, resetState) {
             updateWinArr(0);
             localStorage.setItem(wordLength + "-winArr", winArr);
             updateStatBoxData();
+            return;
         }
     } else {
         addClasses(rowList[currRowNum], ["activerow"]); // advance active row
         getActiveRowTiles();
         functionAfterEveryAction();
+        return;
     }
 }
 
@@ -1082,6 +1088,9 @@ function resetKeyboard() {
 }
 
 function switchFunction() {
+    if (revealState) {
+        return;
+    }
     hideErrorMessage();
     let lng = wordLengthArray.length;
     let itr = 0;
@@ -1323,6 +1332,7 @@ function getColors(inputWord, hiddenWord) {
 }
 
 function revealTiles(colorString, inpStr, resetState = false) {
+    console.log(inpStr);
     removeAllSelection();
     cleanActiveTiles();
     let intervalTime = 200;
@@ -1351,9 +1361,9 @@ function revealTiles(colorString, inpStr, resetState = false) {
             setTimeout(() => {
                 addClasses(activeRowTiles[i], [classStr, "wiggle-tile"]);
                 if (i == colorString.length - 1) {
-                    revealState = false;
                     setTimeout(() => {
                         afterReveal(colorString, inpStr, resetState);
+                        revealState = false;
                     }, 200);
                 }
             }, i * intervalTime);
