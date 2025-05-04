@@ -85,7 +85,7 @@ let startSetup = fetchWordLists(wordLengthArray).then(() => {
     } catch (err) {
         console.error("Fehler bei Datumsabfrage:", err);
     }
-    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.34";
+    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.41";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();
@@ -807,8 +807,6 @@ function afterReveal(cs, inpStr, resetState) {
     }
 
     let currRowNum = getActiveRowNum();
-    removeAllSelection();
-    cleanActiveTiles();
     activeRowTiles = null;
     removeClasses(document.querySelector(".activerow"), ["activerow"]);
 
@@ -1295,6 +1293,8 @@ function getColors(inputWord, hiddenWord) {
 }
 
 function revealTiles(colorString, inpStr, resetState = false) {
+    removeAllSelection();
+    cleanActiveTiles();
     let intervalTime = 200;
     for (let i = 0; i < colorString.length; i++) {
         let classStr;
