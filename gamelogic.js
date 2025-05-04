@@ -55,6 +55,7 @@ let statState = false;
 let infoState = false;
 let settingsState = false;
 let endState = false;
+let revealState;
 let alternateColorState = false;
 let wordLengthArray = [4, 5, 6];
 let defaultWordLength = 5;
@@ -73,7 +74,7 @@ let backspaceHold = false;
 
 // ------------------------------ Setup Process -----------------------------
 
-let startSetup = setAllWordLists(wordLengthArray).then(() => {
+let startSetup = fetchWordLists(wordLengthArray).then(() => {
     setDomVars();
     setupFunction();
     try {
@@ -171,8 +172,6 @@ function setupFunction() {
     }
 
     setWord();
-    // add function to change grid layout depending on word length
-
     reBuildGrid(wordLength);
     resizeGrid();
     setTileDimension();
@@ -186,6 +185,9 @@ function setupFunction() {
 // ---------------- touch or click functionality ------------------------
 function touchClickInteraction(event) {
     /* console.log(event); */
+    if (revealState) {
+        return;
+    }
 
     if (infoButton.contains(event.target)) {
         if (statState) {
@@ -310,6 +312,9 @@ function touchClickInteraction(event) {
 }
 
 function handleKeyboardPress(event) {
+    if (revealState) {
+        return;
+    }
     let inputKey = event.key;
     /* console.log(inputKey); */
     if (!infoState && !settingsState) {
@@ -788,53 +793,58 @@ function enterFunction(resetState = false) {
 
     if (words.includes(inpStr) || word == inpStr || resetState) {
         let cs = getColors(inpStr, word);
-        revealTilesAndKeys(cs, inpStr);
-
-        if (!resetState) {
-            storeInputWord(inpStr);
-        }
-
-        let currRowNum = getActiveRowNum();
-        removeAllSelection();
-        cleanActiveTiles();
-        activeRowTiles = null;
-        removeClasses(document.querySelector(".activerow"), ["activerow"]);
-
-        // win logic
-        if (word == inpStr) {
-            if (!resetState) {
-                // do not update stats while loading grid state
-                updateWinArr(currRowNum);
-                localStorage.setItem(wordLength + "-winArr", winArr);
-                updateStatBoxData();
-            }
-
-            if (currRowNum == 1) {
-                setEndState(`WOW!\nGlückspilz :)`);
-            } else if (currRowNum == nTries) {
-                setEndState(`Puh, knapp!\n${currRowNum} Versuche!`);
-            } else {
-                setEndState(`Gewonnen in ${currRowNum} Versuchen!`);
-            }
-            return;
-        }
-
-        // wrong word entered
-        if (currRowNum == nTries) {
-            // if last guess
-            setEndState(word.toUpperCase() + " . . ."); // loseState
-            if (!resetState) {
-                // do not update stats while loading grid state
-                updateWinArr(0);
-                localStorage.setItem(wordLength + "-winArr", winArr);
-                updateStatBoxData();
-            }
-        } else {
-            addClasses(rowList[currRowNum], ["activerow"]); // advance active row
-            getActiveRowTiles();
-        }
+        revealTiles(cs, inpStr, resetState);
     } else {
         setErrorMessage("Nicht in der Wortliste!");
+    }
+}
+
+function afterReveal(cs, inpStr, resetState) {
+    revealKeys(cs, inpStr);
+
+    if (!resetState) {
+        storeInputWord(inpStr);
+    }
+
+    let currRowNum = getActiveRowNum();
+    removeAllSelection();
+    cleanActiveTiles();
+    activeRowTiles = null;
+    removeClasses(document.querySelector(".activerow"), ["activerow"]);
+
+    // win logic
+    if (word == inpStr) {
+        if (!resetState) {
+            // do not update stats while loading grid state
+            updateWinArr(currRowNum);
+            localStorage.setItem(wordLength + "-winArr", winArr);
+            updateStatBoxData();
+        }
+
+        if (currRowNum == 1) {
+            setEndState(`WOW!\nGlückspilz :)`);
+        } else if (currRowNum == nTries) {
+            setEndState(`Puh, knapp!\n${currRowNum} Versuche!`);
+        } else {
+            setEndState(`Gewonnen in ${currRowNum} Versuchen!`);
+        }
+        return;
+    }
+
+    // wrong word entered
+    if (currRowNum == nTries) {
+        // if last guess
+        setEndState(word.toUpperCase() + " . . ."); // lose game
+        if (!resetState) {
+            // do not update stats while loading grid state
+            updateWinArr(0);
+            localStorage.setItem(wordLength + "-winArr", winArr);
+            updateStatBoxData();
+        }
+    } else {
+        addClasses(rowList[currRowNum], ["activerow"]); // advance active row
+        getActiveRowTiles();
+        functionAfterEveryAction();
     }
 }
 
@@ -850,7 +860,7 @@ function getActiveRowNum() {
 }
 
 function updateWinArr(wr) {
-    console.log(wr);
+    // console.log(wr);
     playedGames++;
     if (wr == 0) {
         losses++;
@@ -1018,7 +1028,12 @@ function resetGrid() {
     addClasses(rowList[0], ["activerow"]);
     for (let tile of allTiles) {
         if (!hasClass(tile, "about-tile")) {
-            removeClasses(tile, ["bg-green", "bg-yellow", "bg-dark"]);
+            removeClasses(tile, [
+                "bg-green",
+                "bg-yellow",
+                "bg-dark",
+                "wiggle-tile",
+            ]);
             tile.innerText = "";
         }
     }
@@ -1172,7 +1187,7 @@ function functionAfterEveryAction() {
 }
 
 // ------- fetch word list ------------------------------------------------
-async function setAllWordLists(validWordLengthArray) {
+async function fetchWordLists(validWordLengthArray) {
     try {
         for (let length of validWordLengthArray) {
             if (length == 5) {
@@ -1263,7 +1278,7 @@ function getColors(inputWord, hiddenWord) {
         let nInInputWord = numberOfLetterInWord(inputLetter, inputWord);
         let nInHiddenWord = numberOfLetterInWord(inputLetter, hiddenWord);
         let diff = nInInputWord - nInHiddenWord;
-        for (let j = inputWord.length - 1; j > -1; j--) {
+        for (let j = i; j > -1; j--) {
             if (inputWord[j] === inputLetter) {
                 if (hiddenWord[j] === inputLetter) {
                     outputArray[j] = "hit";
@@ -1279,16 +1294,44 @@ function getColors(inputWord, hiddenWord) {
     return outputArray;
 }
 
-function revealTilesAndKeys(colorString, inputWord) {
+function revealTiles(colorString, inpStr, resetState = false) {
+    let intervalTime = 200;
     for (let i = 0; i < colorString.length; i++) {
-        if (colorString[i] == "hit") {
-            addClasses(activeRowTiles[i], ["bg-green"]);
-        } else if (colorString[i] == "close") {
-            addClasses(activeRowTiles[i], ["bg-yellow"]);
-        } else if (colorString[i] == "miss") {
-            addClasses(activeRowTiles[i], ["bg-dark"]);
+        let classStr;
+        switch (colorString[i]) {
+            case "hit":
+                classStr = "bg-green";
+                break;
+            case "close":
+                classStr = "bg-yellow";
+                break;
+            case "miss":
+                classStr = "bg-dark";
+                break;
+            default:
+                break;
+        }
+        if (resetState) {
+            addClasses(activeRowTiles[i], [classStr]);
+            if (i == colorString.length - 1) {
+                afterReveal(colorString, inpStr, resetState);
+            }
+        } else {
+            revealState = true;
+            setTimeout(() => {
+                addClasses(activeRowTiles[i], [classStr, "wiggle-tile"]);
+                if (i == colorString.length - 1) {
+                    revealState = false;
+                    setTimeout(() => {
+                        afterReveal(colorString, inpStr, resetState);
+                    }, 200);
+                }
+            }, i * intervalTime);
         }
     }
+}
+
+function revealKeys(colorString, inputWord) {
     for (let i = 0; i < colorString.length; i++) {
         let aKey = document.getElementById(inputWord[i] + "-key");
         if (colorString[i] == "hit") {

@@ -16,11 +16,12 @@
     --greenish-grey: hsl(100, 20%, 20%);
     --greenish-grey-80: hsl(100, 20%, 16%);
 
-    --dark-color: hsl(240, 11%, 10%);
-    --dark-color-80: hsl(240, 11%, 8%);
-    --background-grey: hsl(240, 12%, 5%);
-    --tile-background-grey: rgb(27, 27, 32);
-    --tile-background-grey-50: rgb(27, 27, 32, 0.5);
+    --dark-color: hsla(240, 10%, 12%, 1.0);
+    --dark-color-80: hsla(240, 10%, 12%, 0.8);
+    --tile-background-grey: hsl(0, 0%, 15%);
+    --bg-side-button: hsl(0, 0%, 12%);
+    --bg-side-button-hover: hsla(0, 0%, 12%, 0.5);
+    --game-window-color: hsla(240, 8%, 5%, 1);
     --tile-green: rgb(58, 134, 61);
     --tile-yellow: rgb(219, 146, 0);
     --tile-green-80: rgba(58, 134, 60, 0.8);
@@ -81,7 +82,6 @@ body {
     margin-inline: auto;
     flex: 1;
     justify-self: center;
-    background: var(--background-grey);
     display: flex;
     justify-content: center;
     width: 100%; /*on mobile*/
@@ -92,7 +92,7 @@ body {
     width: 100%;
     flex-direction: column;
     padding: 2vw 0px;
-    background-color: var(--tile-background-grey-50);
+    background-color: var(--game-window-color);
 }
 
 #content-cover {
@@ -189,7 +189,7 @@ body {
 
 .toggle-switch-on > .toggle-circle {
     animation: toggleCircleOn .3s ease;
-    background-color: rgba(255, 255, 255, 0.2);
+    background-color: var(--almost-white);
     margin-left: 57%;
 }
 
@@ -489,7 +489,7 @@ body {
     color: white;
     top: 0;
     bottom: 0;
-    background-color: var(--tile-background-grey);
+    background-color: var(--bg-side-button);
     width: 70%;
     border: 1px solid var(--neutral-grey);
     border-radius: 1vw;
@@ -553,10 +553,10 @@ body {
 }
 
 .wiggle-row {
-    animation: wigglerow .3s ease-in-out;
+    animation: wiggleRow .3s ease-in-out;
 }
 
-@keyframes wigglerow {
+@keyframes wiggleRow {
     0%      {margin-left: 0px; margin-right: 0px;}
     10%     {margin-left: -1%; margin-right: 1%;}
     30%     {margin-left: 1%; margin-right: -1%;}
@@ -574,8 +574,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--tile-background-grey);
-    border: 0.2vw solid var(--neutral-grey);
+    background-color: hsl(0, 0%, 5%);
+    border: 1px solid var(--neutral-grey);
     border-radius: 5%;
     margin: 0.5%;
     flex: 1;
@@ -586,6 +586,21 @@ body {
     text-transform: uppercase;
     color: var(--almost-white);
     text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+.tile.bg-dark {
+    background-color: var(--tile-background-grey);
+}
+
+.wiggle-tile {
+    animation: wiggleTile .2s ease-in-out;
+}
+
+@keyframes wiggleTile {
+    0% { transform: rotate(0); }
+    25% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0); }
 }
 
 div.tile:first-child {
@@ -790,7 +805,7 @@ svg {
 
 
 .bg-dark {
-    background-color: var(--tile-background-grey);
+    background-color: var(--dark-color);
 }
 
 .bg-green {
@@ -973,7 +988,7 @@ svg {
     }
 
     .side-button:hover {
-        background-color: var(--tile-background-grey-50);
+        background-color: var(--bg-side-button-hover);
     }
 
     .active-side-button:hover {
