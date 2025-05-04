@@ -36,6 +36,8 @@ function setDomVars() {
     settingsBox = document.getElementById("settings-box");
     altColorRow = document.getElementById("alternative-colors-row");
     colorSwitchButton = document.getElementById("color-switch");
+    revealAnimationRow = document.getElementById("reveal-animation-row");
+    revealAnimaionSwitch = document.getElementById("reveal-animation-switch");
     keyboardOverlay = document.getElementById("keyboard-overlay");
     bars = document.querySelectorAll(".bar");
     contentDiv = document.getElementById("content-div");
@@ -57,6 +59,7 @@ let settingsState = false;
 let endState = false;
 let revealState;
 let alternateColorState = false;
+let revealAnimationDisabled = false;
 let wordLengthArray = [4, 5, 6];
 let defaultWordLength = 5;
 let nTries = 6;
@@ -258,6 +261,14 @@ function touchClickInteraction(event) {
             (event.type != "click" && altColorRow.contains(event.target))
         ) {
             alternateColorSwitchFunction();
+            return;
+        }
+        if (
+            revealAnimaionSwitch.contains(event.target) ||
+            (event.type != "click" && revealAnimationRow.contains(event.target))
+        ) {
+            revealAnimationSwitchFunction();
+            return;
         }
     }
 
@@ -413,6 +424,12 @@ function applyUserSettings() {
         !alternateColorState
     ) {
         alternateColorSwitchFunction();
+    }
+    if (
+        localStorage.getItem("revealAnimationDisabled") != null &&
+        !revealAnimationDisabled
+    ) {
+        revealAnimationSwitchFunction();
     }
 }
 
@@ -921,6 +938,19 @@ function alternateColorSwitchFunction() {
     }
 }
 
+function revealAnimationSwitchFunction() {
+    revealAnimationDisabled = !revealAnimationDisabled;
+    if (revealAnimationDisabled) {
+        localStorage.setItem("revealAnimationDisabled", "y");
+        addClasses(revealAnimaionSwitch, ["toggle-switch-on"]);
+        removeClasses(revealAnimaionSwitch, ["toggle-switch-off"]);
+    } else {
+        localStorage.removeItem("revealAnimationDisabled");
+        addClasses(revealAnimaionSwitch, ["toggle-switch-off"]);
+        removeClasses(revealAnimaionSwitch, ["toggle-switch-on"]);
+    }
+}
+
 function setEndState(endMessage) {
     endState = true;
     keyboardOverlay.style.setProperty("visibility", "visible");
@@ -1311,7 +1341,7 @@ function revealTiles(colorString, inpStr, resetState = false) {
             default:
                 break;
         }
-        if (resetState) {
+        if (resetState | revealAnimationDisabled) {
             addClasses(activeRowTiles[i], [classStr]);
             if (i == colorString.length - 1) {
                 afterReveal(colorString, inpStr, resetState);
