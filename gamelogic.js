@@ -699,6 +699,18 @@ function activeRowFull() {
     return null;
 }
 
+function activeRowEmpty() {
+    if (!endState) {
+        for (let tile of activeRowTiles) {
+            if (tile.innerText != "") {
+                return false;
+            }
+        }
+        return true;
+    }
+    return null;
+}
+
 function removeSelection(tile) {
     if (hasClass(tile, "selected")) {
         tile.classList.remove("selected");
@@ -794,7 +806,11 @@ function backspaceFunction() {
             activeRowTiles[ati - 1].innerText = "";
         } else if (ati == 0) {
             removeSelection(activeRowTiles[ati], ["selected"]);
-            wiggleActiveRow();
+            if (!activeRowEmpty()) {
+                addSelection(activeRowTiles[activeRowTiles.length - 1]);
+            } else {
+                wiggleActiveRow();
+            }
         }
         functionAfterEveryAction();
     }
