@@ -122,6 +122,7 @@ besen
 beste
 beten
 beton
+beuge
 beule
 beute
 bevor
@@ -346,7 +347,6 @@ essig
 etage
 ethik
 ethos
-etter
 etwas
 etwas
 euter
@@ -548,7 +548,6 @@ hefig
 hegen
 heide
 heiss
-helfe
 helix
 helle
 henne
@@ -1084,7 +1083,6 @@ rambo
 ramme
 rampe
 ranch
-range
 ranke
 rasch
 rasen

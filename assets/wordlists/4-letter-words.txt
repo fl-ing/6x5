@@ -290,6 +290,7 @@ hatz
 haus
 haut
 haxe
+heck
 heer
 hefe
 heft

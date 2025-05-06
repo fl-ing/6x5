@@ -1716,6 +1716,7 @@ rucola
 rudern
 rudern
 ruegen
+ruepel
 rummel
 runden
 rundum
