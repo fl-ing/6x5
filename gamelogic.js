@@ -77,7 +77,7 @@ let backspaceHold = false;
 
 // ------------------------------ Setup Process -----------------------------
 
-let startSetup = fetchWordLists(wordLengthArray).then(() => {
+fetchWordLists(wordLengthArray).then(() => {
     setDomVars();
     setupFunction();
     try {
@@ -88,7 +88,7 @@ let startSetup = fetchWordLists(wordLengthArray).then(() => {
     } catch (err) {
         console.error("Fehler bei Datumsabfrage:", err);
     }
-    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.42";
+    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.43";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();
@@ -140,14 +140,12 @@ let startSetup = fetchWordLists(wordLengthArray).then(() => {
         }
         backspaceHold = false;
         clearTimeout(backspaceTimeout);
-        /* contentDiv.removeEventListener("touchmove"); */
     });
 
     document.addEventListener("touchcancel", (event) => {
         event.preventDefault();
         backspaceHold = false;
         clearTimeout(backspaceTimeout);
-        /* contentDiv.removeEventListener("touchmove"); */
     });
 
     document.addEventListener("click", (event) => {
@@ -155,8 +153,6 @@ let startSetup = fetchWordLists(wordLengthArray).then(() => {
         touchClickInteraction(event);
     });
 });
-
-window.addEventListener("DOMContentLoaded", startSetup);
 
 function setupFunction() {
     setWordLength();
@@ -559,7 +555,7 @@ function updateStatBoxData() {
 
 function setWordLength() {
     wordLength = Number(localStorage.getItem("userWordLength"));
-    if (wordLength == 0 || isNaN(wordLength)) {
+    if (isNaN(wordLength) || !wordLengthArray.includes(wordLength)) {
         wordLength = defaultWordLength;
     }
     document.getElementById("stat-heading-num").innerText = `6x${wordLength}`;
@@ -904,11 +900,13 @@ function updateWinArr(wr) {
     // console.log(wr);
     playedGames++;
     if (wr == 0) {
+        // game lost
         losses++;
         winArr[2] = losses;
         streaks.current = 0;
         winArr[0] = streaks.current;
     } else {
+        // game won
         wins++;
         streaks.current++;
         if (streaks.current > streaks.best) {
@@ -1175,6 +1173,7 @@ function statSwitchFunction() {
 }
 
 function infoSwitchFunction() {
+    // do the following if info state is being deactivated
     if (infoState) {
         infoState = false;
         contentCover.style.visibility = "hidden";
@@ -1184,6 +1183,7 @@ function infoSwitchFunction() {
         infoBox.style.visibility = "hidden";
         return;
     }
+    // do the following if info state is being activated
     hideErrorMessage();
     infoState = true;
     contentCover.style.setProperty("visibility", "visible");
@@ -1194,6 +1194,7 @@ function infoSwitchFunction() {
 }
 
 function settingsSwitchFunction() {
+    // do the following if settings state is being deactivated
     if (settingsState) {
         settingsState = false;
         contentCover.style.visibility = "hidden";
@@ -1204,6 +1205,7 @@ function settingsSwitchFunction() {
         settingsBox.style.visibility = "hidden";
         return;
     }
+    // do the following if settings state is being activated
     hideErrorMessage();
     settingsState = true;
     contentCover.style.setProperty("visibility", "visible");
