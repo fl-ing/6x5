@@ -658,11 +658,20 @@ function resetGridState() {
     wordArr = JSON.parse(strWrdLst);
     for (let i = 0; i < wordArr.length; i++) {
         // handle faulty safestate
-        if (wordArr[i].length != wordLength) {
+        if (
+            wordArr[i].length != wordLength ||
+            !stringHasValidLettersOnly(wordArr[i])
+        ) {
+            // delete faulty entry
             wordArr = wordArr.slice(0, i);
-            let storeWrdArr = JSON.stringify(wordArr);
-            localStorage.setItem(wordLength + "-inputWords", storeWrdArr);
-            return;
+            if (wordArr.length == 0) {
+                localStorage.removeItem(wordLength + "-inputWords");
+                return;
+            } else {
+                let storeWrdArr = JSON.stringify(wordArr);
+                localStorage.setItem(wordLength + "-inputWords", storeWrdArr);
+                return;
+            }
         }
         for (let j = 0; j < wordLength; j++) {
             rowList[i].children[j].innerText = wordArr[i][j];
@@ -1243,6 +1252,15 @@ function addClasses(obj, classNameArr) {
 
 function functionAfterEveryAction() {
     setActiveTile();
+}
+
+function stringHasValidLettersOnly(str) {
+    for (let char of str) {
+        if (!validLetters.includes(char)) {
+            return false;
+        }
+    }
+    return true;
 }
 
 // ------- fetch word list ------------------------------------------------
