@@ -37,7 +37,9 @@ function setDomVars() {
     altColorRow = document.getElementById("alternative-colors-row");
     colorSwitchButton = document.getElementById("color-switch");
     revealAnimationRow = document.getElementById("reveal-animation-row");
-    revealAnimaionSwitch = document.getElementById("reveal-animation-switch");
+    revealAnimationSwitch = document.getElementById("reveal-animation-switch");
+    statsAnimationRow = document.getElementById("stats-animation-row");
+    statsAnimationSwitch = document.getElementById("stats-animation-switch");
     keyboardOverlay = document.getElementById("keyboard-overlay");
     bars = document.querySelectorAll(".bar");
     contentDiv = document.getElementById("content-div");
@@ -58,8 +60,9 @@ let infoState = false;
 let settingsState = false;
 let endState = false;
 let revealState;
-let alternateColorState = false;
+let alternateColorsEnabled = false;
 let revealAnimationDisabled = false;
+let statsAnimationDisabled = false;
 let wordLengthArray = [4, 5, 6];
 let defaultWordLength = 5;
 let nTries = 6;
@@ -80,14 +83,8 @@ let backspaceHold = false;
 fetchWordLists(wordLengthArray).then(() => {
     setDomVars();
     setupFunction();
-    try {
-        let currentYear = new Date().getFullYear();
-        document.getElementById(
-            "copyright-text"
-        ).innerHTML = `&nbsp;© ${currentYear}`;
-    } catch (err) {
-        console.error("Fehler bei Datumsabfrage:", err);
-    }
+    setYear();
+
     document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.43";
 
     document.addEventListener("keydown", (event) => {
@@ -181,6 +178,17 @@ function setupFunction() {
     setActiveTile(); // auto sets the active tile
 }
 
+function setYear() {
+    try {
+        let currentYear = new Date().getFullYear();
+        document.getElementById(
+            "copyright-text"
+        ).innerHTML = `&nbsp;© ${currentYear}`;
+    } catch (err) {
+        console.error("Fehler bei Datumsabfrage:", err);
+    }
+}
+
 // ---------------- touch or click functionality ------------------------
 function touchClickInteraction(event) {
     /* console.log(event); */
@@ -260,10 +268,17 @@ function touchClickInteraction(event) {
             return;
         }
         if (
-            revealAnimaionSwitch.contains(event.target) ||
+            revealAnimationSwitch.contains(event.target) ||
             (event.type != "click" && revealAnimationRow.contains(event.target))
         ) {
             revealAnimationSwitchFunction();
+            return;
+        }
+        if (
+            statsAnimationSwitch.contains(event.target) ||
+            (event.type != "click" && statsAnimationRow.contains(event.target))
+        ) {
+            statsAnimationSwitchFunction();
             return;
         }
     }
@@ -416,8 +431,8 @@ function getUserData() {
 
 function applyUserSettings() {
     if (
-        localStorage.getItem("alternateColors") != null &&
-        !alternateColorState
+        localStorage.getItem("alternateColorsEnabled") != null &&
+        !alternateColorsEnabled
     ) {
         alternateColorSwitchFunction();
     }
@@ -426,6 +441,12 @@ function applyUserSettings() {
         !revealAnimationDisabled
     ) {
         revealAnimationSwitchFunction();
+    }
+    if (
+        localStorage.getItem("statsAnimationDisabled") != null &&
+        !statsAnimationDisabled
+    ) {
+        statsAnimationSwitchFunction();
     }
 }
 
@@ -440,50 +461,61 @@ function updateStatBoxData() {
     console.log("best", streaks.best);
     console.log("losses", losses);
     console.log("wins:", wins); */
-
-    if (statState) {
-        /*     currentStreakElement.innerText = streaks.current.toString(); */
-        animateStatInt(currentStreakElement, streaks.current.toString());
-
-        /*     bestStreakElement.innerText = streaks.best.toString(); */
-        animateStatInt(bestStreakElement, streaks.best.toString());
-
-        /*     playedGamesElement.innerText = playedGames.toString(); */
-        animateStatInt(playedGamesElement, playedGames.toString());
-
-        /*     wonGamesElement.innerText = wins.toString(); */
-        animateStatInt(wonGamesElement, wins.toString());
-    }
-
-    /*     winPercentElement.innerText = winPercentStr; */
     let winPercentStr =
         playedGames == 0 ? "0.00" : ((wins / playedGames) * 100).toFixed(2);
-
-    if (!statState) {
-        winPercentElement.style.setProperty("--percent", "0.00");
-    } else {
-        winPercentElement.style.setProperty("--percent", winPercentStr);
-    }
-    addClasses(winPercentElement, ["change-float"]);
 
     // calculate average tries
     let highestN = winArr[3];
     let avrTries = 0;
-    let avrTriesStr;
     for (let i = 3; i < winArr.length; i++) {
         avrTries += winArr[i] * (i - 2);
         if (winArr[i] > highestN) {
             highestN = winArr[i];
         }
     }
-    avrTriesStr = wins == 0 ? "0.00" : (avrTries / wins).toFixed(2);
-    if (!statState) {
-        avrTriesElement.style.setProperty("--percent", "0.00");
-    } else {
-        avrTriesElement.style.setProperty("--percent", avrTriesStr);
+    let avrTriesStr = wins == 0 ? "0.00" : (avrTries / wins).toFixed(2);
+    if (statState) {
+        if (statsAnimationDisabled) {
+            currentStreakElement.innerText = streaks.current.toString();
+            removeClasses(currentStreakElement, ["change-num"]);
+            bestStreakElement.innerText = streaks.best.toString();
+            removeClasses(bestStreakElement, ["change-num"]);
+            playedGamesElement.innerText = playedGames.toString();
+            removeClasses(playedGamesElement, ["change-num"]);
+            wonGamesElement.innerText = wins.toString();
+            removeClasses(wonGamesElement, ["change-num"]);
+            winPercentElement.innerText = winPercentStr;
+            removeClasses(winPercentElement, ["change-float"]);
+            avrTriesElement.innerText = avrTriesStr;
+            removeClasses(avrTriesElement, ["change-float"]);
+            avrTriesElement.style.removeProperty("--percent");
+        } else {
+            currentStreakElement.innerText = "";
+            bestStreakElement.innerText = "";
+            playedGamesElement.innerText = "";
+            wonGamesElement.innerText = "";
+            animateStatInt(currentStreakElement, streaks.current.toString());
+            animateStatInt(bestStreakElement, streaks.best.toString());
+            animateStatInt(playedGamesElement, playedGames.toString());
+            animateStatInt(wonGamesElement, wins.toString());
+
+            if (!statState) {
+                winPercentElement.style.setProperty("--percent", "0.00");
+            } else {
+                winPercentElement.style.setProperty("--percent", winPercentStr);
+            }
+            addClasses(winPercentElement, ["change-float"]);
+            winPercentElement.innerText = "";
+
+            if (!statState) {
+                avrTriesElement.style.setProperty("--percent", "0.00");
+            } else {
+                avrTriesElement.style.setProperty("--percent", avrTriesStr);
+            }
+            addClasses(avrTriesElement, ["change-float"]);
+            avrTriesElement.innerText = "";
+        }
     }
-    addClasses(avrTriesElement, ["change-float"]);
-    /* avrTriesElement.innerText = avrTriesStr; */
 
     for (let i = 3; i < winArr.length; i++) {
         let bar = document.getElementById("bar-" + (i - 2));
@@ -498,22 +530,27 @@ function updateStatBoxData() {
         btnContainer.style.setProperty("--curr-btnh", currBtnTopValue);
 
         if (statState) {
-            let barStyle = window.getComputedStyle(bar);
-            let currBarHeight = barStyle.getPropertyValue("--percentage");
-            if (currBarHeight == "") {
-                currBarHeight = "0%";
-            }
-            bar.style.setProperty("--prev-px", currBarHeight);
             let barPercent =
                 highestN == 0
                     ? 0
                     : parseFloat(((winArr[i] / highestN) * 100).toFixed(2));
             let barPercentStr = barPercent + "%";
-            bar.style.setProperty("--percentage", barPercentStr);
-            bar.style.setProperty("height", barPercentStr);
-
-            animateStatInt(barTopNum, winArr[i]);
-            /* barTopNum.innerText = winArr[i]; */
+            if (statsAnimationDisabled) {
+                barTopNum.innerText = winArr[i].toString();
+                removeClasses(barTopNum, ["change-num"]);
+                bar.style.setProperty("height", barPercentStr);
+            } else {
+                barTopNum.innerText = "";
+                let barStyle = window.getComputedStyle(bar);
+                let currBarHeight = barStyle.getPropertyValue("--percentage");
+                if (currBarHeight == "") {
+                    currBarHeight = "0%";
+                }
+                bar.style.setProperty("--prev-px", currBarHeight);
+                bar.style.setProperty("--percentage", barPercentStr);
+                bar.style.setProperty("height", barPercentStr);
+                animateStatInt(barTopNum, winArr[i]);
+            }
         }
     }
 
@@ -525,20 +562,23 @@ function updateStatBoxData() {
         let barHeight = document.getElementById("bar-" + (i - 2)).offsetHeight;
         if (barTopNumHeight > barHeight) {
             btnContainer.style.setProperty("top", "-" + barTopNumHeight + "px");
-            btnContainer.style.setProperty(
-                "--new-btnh",
-                "-" + barTopNumHeight + "px"
-            );
+            if (!statsAnimationDisabled) {
+                btnContainer.style.setProperty(
+                    "--new-btnh",
+                    "-" + barTopNumHeight + "px"
+                );
+            }
         } else {
-            btnContainer.style.setProperty("--new-btnh", "0px");
+            if (!statsAnimationDisabled) {
+                btnContainer.style.setProperty("--new-btnh", "0px");
+            }
         }
     }
 
-    if (statState) {
+    if (statState && !statsAnimationDisabled) {
         for (let i = 3; i < winArr.length; i++) {
             let bar = document.getElementById("bar-" + (i - 2));
             addClasses(bar, ["change-bar"]);
-
             let btnContainer = document.getElementById(
                 "btn-container-" + (i - 2)
             );
@@ -928,11 +968,11 @@ function updateWinArr(wr) {
 }
 
 function alternateColorSwitchFunction() {
-    alternateColorState = !alternateColorState;
+    alternateColorsEnabled = !alternateColorsEnabled;
     let rootCssRules = getCssRulesFor(":root");
-    if (alternateColorState) {
+    if (alternateColorsEnabled) {
         // set alternative colors
-        localStorage.setItem("alternateColors", "y");
+        localStorage.setItem("alternateColorsEnabled", "");
         addClasses(colorSwitchButton, ["toggle-switch-on"]);
         removeClasses(colorSwitchButton, ["toggle-switch-off"]);
         rootCssRules.style.setProperty("--tile-green", "rgb(196, 19, 93)");
@@ -951,7 +991,7 @@ function alternateColorSwitchFunction() {
             "blauer Buchstabe";
     } else {
         // set normal colors
-        localStorage.removeItem("alternateColors");
+        localStorage.removeItem("alternateColorsEnabled");
         addClasses(colorSwitchButton, ["toggle-switch-off"]);
         removeClasses(colorSwitchButton, ["toggle-switch-on"]);
         rootCssRules.style.setProperty("--tile-green", "rgb(58, 134, 61)");
@@ -974,13 +1014,26 @@ function alternateColorSwitchFunction() {
 function revealAnimationSwitchFunction() {
     revealAnimationDisabled = !revealAnimationDisabled;
     if (revealAnimationDisabled) {
-        localStorage.setItem("revealAnimationDisabled", "y");
-        addClasses(revealAnimaionSwitch, ["toggle-switch-on"]);
-        removeClasses(revealAnimaionSwitch, ["toggle-switch-off"]);
+        localStorage.setItem("revealAnimationDisabled", "");
+        addClasses(revealAnimationSwitch, ["toggle-switch-on"]);
+        removeClasses(revealAnimationSwitch, ["toggle-switch-off"]);
     } else {
         localStorage.removeItem("revealAnimationDisabled");
-        addClasses(revealAnimaionSwitch, ["toggle-switch-off"]);
-        removeClasses(revealAnimaionSwitch, ["toggle-switch-on"]);
+        addClasses(revealAnimationSwitch, ["toggle-switch-off"]);
+        removeClasses(revealAnimationSwitch, ["toggle-switch-on"]);
+    }
+}
+
+function statsAnimationSwitchFunction() {
+    statsAnimationDisabled = !statsAnimationDisabled;
+    if (statsAnimationDisabled) {
+        localStorage.setItem("statsAnimationDisabled", "");
+        addClasses(statsAnimationSwitch, ["toggle-switch-on"]);
+        removeClasses(statsAnimationSwitch, ["toggle-switch-off"]);
+    } else {
+        localStorage.removeItem("statsAnimationDisabled");
+        addClasses(statsAnimationSwitch, ["toggle-switch-off"]);
+        removeClasses(statsAnimationSwitch, ["toggle-switch-on"]);
     }
 }
 
@@ -1144,7 +1197,7 @@ function switchFunction() {
 
 function statSwitchFunction() {
     if (statState) {
-        // do the following if stat state is being deactivated
+        // deactivate statState
         statState = false;
         contentCover.style.setProperty("visibility", "hidden");
         statBox.style.visibility = "hidden";
@@ -1170,7 +1223,7 @@ function statSwitchFunction() {
         }
         return;
     }
-    // do the following if stat state is being activated
+    // activate statState
     hideErrorMessage();
     statState = true;
     contentCover.style.setProperty("visibility", "visible");
@@ -1182,7 +1235,7 @@ function statSwitchFunction() {
 }
 
 function infoSwitchFunction() {
-    // do the following if info state is being deactivated
+    // deactivate infoState
     if (infoState) {
         infoState = false;
         contentCover.style.visibility = "hidden";
@@ -1192,7 +1245,7 @@ function infoSwitchFunction() {
         infoBox.style.visibility = "hidden";
         return;
     }
-    // do the following if info state is being activated
+    // activate infoState
     hideErrorMessage();
     infoState = true;
     contentCover.style.setProperty("visibility", "visible");
@@ -1203,7 +1256,7 @@ function infoSwitchFunction() {
 }
 
 function settingsSwitchFunction() {
-    // do the following if settings state is being deactivated
+    // deactivate settingsState
     if (settingsState) {
         settingsState = false;
         contentCover.style.visibility = "hidden";
@@ -1214,7 +1267,7 @@ function settingsSwitchFunction() {
         settingsBox.style.visibility = "hidden";
         return;
     }
-    // do the following if settings state is being activated
+    // activate settingsState
     hideErrorMessage();
     settingsState = true;
     contentCover.style.setProperty("visibility", "visible");
