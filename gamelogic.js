@@ -85,7 +85,7 @@ fetchWordLists(wordLengthArray).then(() => {
     setupFunction();
     setYear();
 
-    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.43";
+    document.getElementById("debug-text-1").innerHTML = "&nbsp;v1.44";
 
     document.addEventListener("keydown", (event) => {
         event.preventDefault();
