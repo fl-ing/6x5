@@ -880,6 +880,7 @@ function enterFunction(resetState = false) {
     if (words.includes(inpStr) || word == inpStr || resetState) {
         let cs = getColors(inpStr, word);
         revealTiles(cs, inpStr, resetState);
+        hideErrorMessage();
     } else {
         setErrorMessage("Nicht in der Wortliste!");
     }
