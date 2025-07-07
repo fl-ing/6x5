@@ -413,6 +413,7 @@ floss
 flott
 fluch
 flugs
+fluid
 fluss
 flyer
 foehn
@@ -1391,7 +1392,7 @@ troll
 tropf
 tross
 trost
-trotz
+trott
 trotz
 truck
 trueb

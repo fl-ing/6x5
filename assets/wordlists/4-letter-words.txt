@@ -109,7 +109,6 @@ dazu
 deal
 deck
 dein
-demo
 denn
 depp
 derb
@@ -269,7 +268,6 @@ haar
 habe
 hack
 haft
-haha
 hahn
 hain
 halb
@@ -294,7 +292,6 @@ heck
 heer
 hefe
 heft
-hehe
 hehl
 heil
 heim
@@ -310,7 +307,6 @@ hexe
 hieb
 hier
 high
-hihi
 hirn
 hoch
 hohl
@@ -321,7 +317,6 @@ horn
 hort
 hose
 huhn
-huhu
 hund
 hupe
 hure
@@ -331,7 +326,6 @@ idol
 igel
 iglu
 imam
-info
 inka
 irre
 jade
@@ -467,6 +461,7 @@ mahl
 maid
 mail
 mais
+maki
 malz
 mama
 mann
