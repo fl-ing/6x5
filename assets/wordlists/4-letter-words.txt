@@ -27,7 +27,6 @@ anus
 arie
 arme
 arzt
-assi
 asyl
 atem
 atom
@@ -435,7 +434,6 @@ lied
 lift
 liga
 lila
-limo
 lind
 link
 lira
@@ -517,6 +515,7 @@ nass
 neid
 nein
 neon
+nerd
 nerv
 nerz
 nest
@@ -524,8 +523,6 @@ nett
 netz
 neue
 neun
-news
-nice
 nixe
 noch
 none

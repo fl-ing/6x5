@@ -236,7 +236,6 @@ dekan
 dekor
 delle
 delta
-demos
 demut
 depot
 derbe
@@ -252,6 +251,7 @@ dildo
 dinar
 dings
 diode
+dipol
 dirne
 disco
 docht
@@ -1157,7 +1157,6 @@ ruine
 rumba
 rumpf
 runde
-runge
 rural
 sache
 sacht

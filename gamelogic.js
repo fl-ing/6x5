@@ -853,6 +853,7 @@ function backspaceFunction() {
             removeSelection(activeRowTiles[ati], ["selected"]);
             if (!activeRowEmpty()) {
                 addSelection(activeRowTiles[activeRowTiles.length - 1]);
+                activeRowTiles[activeRowTiles.length - 1].innerText = "";
             } else {
                 wiggleActiveRow();
             }

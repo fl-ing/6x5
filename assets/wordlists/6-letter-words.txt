@@ -2078,6 +2078,7 @@ triage
 tribun
 tribut
 trikot
+triole
 triple
 troete
 troika
